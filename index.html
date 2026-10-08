@@ -13,9 +13,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="loader" id="loader" aria-hidden="true"><span>⚖</span></div>
+<div class="progress" id="progress"></div>
 
 <header class="nav" id="nav">
   <a class="brand" href="#top"><span class="brand-mark">⚖</span><span>مصطفى جمال</span></a>
@@ -24,8 +27,7 @@
     <a href="#about">نبذة</a>
     <a href="#services">التخصصات</a>
     <a href="#credentials">المؤهلات</a>
-    <a href="#gallery">من ساحات العدالة</a>
-    <a href="#more">الصور</a>
+    <a href="#gallery">معرض الصور</a>
     <a href="#catalog">أعمالي</a>
     <a href="#contact">تواصل معي</a>
     <a class="btn btn-gold sm" href="https://wa.me/201229403351" target="_blank" rel="noopener">واتساب</a>
@@ -34,11 +36,12 @@
 
 <main id="top">
 <section class="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-bg" id="heroBg"></div>
+  <canvas class="dust" id="dust" aria-hidden="true"></canvas>
   <div class="container hero-grid">
     <div class="hero-text reveal">
       <span class="pill">محامي جنايات · قيد الاستئناف · مستشار قانوني</span>
-      <h1>المستشار<br><em>مصطفى جمال</em></h1>
+      <h1><span class="ln"><span>المستشار</span></span><span class="ln"><em><span>مصطفى جمال</span></em></span></h1>
       <p class="lead">العدل أساس الملك. أتولى قضاياكم بخبرة وحرص وأمانة، في القضايا الجنائية وقضايا الأموال العامة وتأسيس الشركات والتهرب الضريبي والإفراج الجمركي.</p>
       <div class="cta">
         <a class="btn btn-gold" href="https://wa.me/201229403351" target="_blank" rel="noopener">احجز استشارة عبر واتساب</a>
@@ -51,16 +54,18 @@
       </ul>
     </div>
     <div class="hero-photo reveal">
-      <div class="frame"><img src="img/hero.jpg" alt="المستشار مصطفى جمال بالبدلة والروب" fetchpriority="high"></div>
+      <div class="ring" aria-hidden="true"></div><div class="frame" id="tiltFrame"><img src="img/hero.jpg" alt="المستشار مصطفى جمال بالبدلة والروب" fetchpriority="high"></div>
       <div class="badge-float"><b>⚖</b><span>محامي جنايات</span></div>
     </div>
   </div>
 </section>
 
+<section class="marquee" aria-hidden="true"><div class="mq-track"><span>القضايا الجنائية</span><i>⚖</i><span>الأموال العامة</span><i>⚖</i><span>تأسيس الشركات</span><i>⚖</i><span>التهرب الضريبي</span><i>⚖</i><span>الإفراج الجمركي</span><i>⚖</i><span>القضايا الجنائية</span><i>⚖</i><span>الأموال العامة</span><i>⚖</i><span>تأسيس الشركات</span><i>⚖</i><span>التهرب الضريبي</span><i>⚖</i><span>الإفراج الجمركي</span><i>⚖</i><span>القضايا الجنائية</span><i>⚖</i><span>الأموال العامة</span><i>⚖</i><span>تأسيس الشركات</span><i>⚖</i><span>التهرب الضريبي</span><i>⚖</i><span>الإفراج الجمركي</span><i>⚖</i><span>القضايا الجنائية</span><i>⚖</i><span>الأموال العامة</span><i>⚖</i><span>تأسيس الشركات</span><i>⚖</i><span>التهرب الضريبي</span><i>⚖</i><span>الإفراج الجمركي</span><i>⚖</i></div></section>
+
 <section class="strip">
   <div class="container strip-in">
-    <div><b>٥</b><span>مجالات تخصص</span></div>
-    <div><b>٢</b><span>مؤهلان أكاديميان</span></div>
+    <div><b data-count="5">٥</b><span>مجالات تخصص</span></div>
+    <div><b data-count="2">٢</b><span>مؤهلان أكاديميان</span></div>
     <div><b>جنايات</b><span>الدفاع أمام المحاكم</span></div>
     <div><b>الجيزة</b><span>مقر المكتب</span></div>
   </div>
@@ -86,12 +91,12 @@
   <div class="container">
     <div class="head reveal"><span class="eyebrow">مجالات التخصص</span><h2>خدمات قانونية متخصصة</h2><p>تخصصات دقيقة تتطلب معرفة عميقة بالإجراءات والمواعيد والدفوع.</p></div>
     <div class="cards">
-      <article class="card reveal"><div class="ico">⚖</div><h3>القضايا الجنائية</h3><p>الدفاع أمام محاكم الجنايات والاستئناف في مختلف الجرائم، وإعداد المذكرات والدفوع وحضور التحقيقات.</p></article>
-      <article class="card reveal"><div class="ico">🏛</div><h3>قضايا الأموال العامة</h3><p>الدفاع والمتابعة في قضايا الأموال العامة بدراسة دقيقة للمستندات والتقارير الفنية.</p></article>
-      <article class="card reveal"><div class="ico">🏢</div><h3>تأسيس الشركات</h3><p>تأسيس جميع أنواع الشركات وإعداد العقود والنظم الأساسية واستكمال الإجراءات القانونية.</p></article>
-      <article class="card reveal"><div class="ico">📑</div><h3>التهرب الضريبي</h3><p>جميع القضايا المتعلقة بالتهرب الضريبي، من الفحص والتظلمات إلى التقاضي والتسويات.</p></article>
-      <article class="card reveal"><div class="ico">🚢</div><h3>الإفراج الجمركي</h3><p>إنهاء إجراءات الإفراج الجمركي والمنازعات الجمركية بسرعة ودقة قانونية.</p></article>
-      <article class="card cta-card reveal"><h3>لديك قضية؟</h3><p>تحدث معي الآن لتقييم موقفك القانوني.</p><a class="btn btn-gold" href="https://wa.me/201229403351" target="_blank" rel="noopener">راسلني على واتساب</a></article>
+      <article class="card tilt reveal"><div class="ico">⚖</div><h3>القضايا الجنائية</h3><p>الدفاع أمام محاكم الجنايات والاستئناف في مختلف الجرائم، وإعداد المذكرات والدفوع وحضور التحقيقات.</p></article>
+      <article class="card tilt reveal"><div class="ico">🏛</div><h3>قضايا الأموال العامة</h3><p>الدفاع والمتابعة في قضايا الأموال العامة بدراسة دقيقة للمستندات والتقارير الفنية.</p></article>
+      <article class="card tilt reveal"><div class="ico">🏢</div><h3>تأسيس الشركات</h3><p>تأسيس جميع أنواع الشركات وإعداد العقود والنظم الأساسية واستكمال الإجراءات القانونية.</p></article>
+      <article class="card tilt reveal"><div class="ico">📑</div><h3>التهرب الضريبي</h3><p>جميع القضايا المتعلقة بالتهرب الضريبي، من الفحص والتظلمات إلى التقاضي والتسويات.</p></article>
+      <article class="card tilt reveal"><div class="ico">🚢</div><h3>الإفراج الجمركي</h3><p>إنهاء إجراءات الإفراج الجمركي والمنازعات الجمركية بسرعة ودقة قانونية.</p></article>
+      <article class="card cta-card tilt reveal"><h3>لديك قضية؟</h3><p>تحدث معي الآن لتقييم موقفك القانوني.</p><a class="btn btn-gold" href="https://wa.me/201229403351" target="_blank" rel="noopener">راسلني على واتساب</a></article>
     </div>
   </div>
 </section>
@@ -114,36 +119,36 @@
 
 <section class="section dark" id="gallery">
   <div class="container">
-    <div class="head reveal"><span class="eyebrow">من ساحات العدالة</span><h2>لحظات من الميدان</h2><p>من مجمع المحاكم ومحكمة استئناف القاهرة إلى لحظات الاحتفال مع الموكلين.</p></div>
-    <div class="gal">
-      <figure class="g big reveal"><img src="img/success.jpg" alt="الاحتفال مع الموكلين بصدور حكم البراءة" loading="lazy"><figcaption>الاحتفال مع الموكلين بصدور حكم البراءة</figcaption></figure>
-      <figure class="g reveal"><img src="img/court1.jpg" alt="أمام مجمع المحاكم" loading="lazy"><figcaption>مجمع المحاكم</figcaption></figure>
-      <figure class="g reveal"><img src="img/court2.jpg" alt="أمام محكمة الاستئناف" loading="lazy"><figcaption>محكمة الاستئناف</figcaption></figure>
-      <figure class="g reveal"><img src="img/court3.jpg" alt="قاعة المحكمة" loading="lazy"><figcaption>قاعة المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/court4.jpg" alt="محكمة استئناف القاهرة" loading="lazy"><figcaption>استئناف القاهرة</figcaption></figure>
-      <figure class="g wide reveal"><img src="img/colleagues.jpg" alt="مع الزملاء أمام المحكمة" loading="lazy"><figcaption>مع الزملاء أمام المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/moment.jpg" alt="لقطات من العمل" loading="lazy"><figcaption>لقطات من العمل</figcaption></figure>
-      <figure class="g reveal"><img src="img/courts.jpg" alt="جولات في المحاكم" loading="lazy"><figcaption>جولات في المحاكم</figcaption></figure>
+    <div class="head reveal"><span class="eyebrow">معرض الصور</span><h2>لحظات من ساحات العدالة</h2><p>من مجمع المحاكم ومحكمة استئناف القاهرة إلى لحظات الاحتفال مع الموكلين. اضغط على أي صورة لتكبيرها.</p></div>
+    <div class="chips reveal" id="chips" role="tablist" aria-label="تصفية الصور">
+      <button class="chip on" data-f="all" role="tab" aria-selected="true">الكل</button>
+      <button class="chip" data-f="court" role="tab" aria-selected="false">المحاكم</button>
+      <button class="chip" data-f="col" role="tab" aria-selected="false">مع الزملاء</button>
+      <button class="chip" data-f="occ" role="tab" aria-selected="false">مناسبات وتهاني</button>
+      <button class="chip" data-f="por" role="tab" aria-selected="false">صور شخصية</button>
     </div>
-  </div>
-</section>
-
-<section class="section" id="more">
-  <div class="container">
-    <div class="head reveal"><span class="eyebrow">المزيد من الصور</span><h2>مواقف وذكريات من العمل</h2><p>اضغط على أي صورة لتكبيرها.</p></div>
-    <div class="gal gal2">
-      <figure class="g tall reveal"><img src="img/new0037.jpg" alt="المستشار مصطفى جمال محمود - محامي جنايات قيد الاستئناف" loading="lazy"><figcaption>المستشار مصطفى جمال محمود - محامي جنايات قيد الاستئناف</figcaption></figure>
-      <figure class="g tall reveal"><img src="img/new0028.jpg" alt="بمناسبة انتهاء الموسم القضائي" loading="lazy"><figcaption>بمناسبة انتهاء الموسم القضائي</figcaption></figure>
-      <figure class="g tall reveal"><img src="img/new0033.jpg" alt="لقطات من الميدان" loading="lazy"><figcaption>لقطات من الميدان</figcaption></figure>
-      <figure class="g tall reveal"><img src="img/new0036.jpg" alt="لقطات من ساحات المحاكم" loading="lazy"><figcaption>لقطات من ساحات المحاكم</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0035.jpg" alt="المستشار مصطفى جمال محمود بالروب" loading="lazy"><figcaption>المستشار مصطفى جمال محمود بالروب</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0031.jpg" alt="مع زميل في قاعة المحكمة" loading="lazy"><figcaption>مع زميل في قاعة المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0026.jpg" alt="مع زميل في أروقة المحكمة" loading="lazy"><figcaption>مع زميل في أروقة المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0027.jpg" alt="مع زميل بعد الجلسة" loading="lazy"><figcaption>مع زميل بعد الجلسة</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0029.jpg" alt="في زيارة مكتبية مع الزملاء" loading="lazy"><figcaption>في زيارة مكتبية مع الزملاء</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0030.jpg" alt="في استراحة داخل المحكمة" loading="lazy"><figcaption>في استراحة داخل المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0032.jpg" alt="داخل قاعة المحكمة" loading="lazy"><figcaption>داخل قاعة المحكمة</figcaption></figure>
-      <figure class="g reveal"><img src="img/new0034.jpg" alt="أمام محكمة الجنايات" loading="lazy"><figcaption>أمام محكمة الجنايات</figcaption></figure>
+    <div class="masonry" id="masonry">
+      <figure class="m reveal" data-cat="occ"><button type="button" aria-label="تكبير: الاحتفال مع الموكلين بصدور حكم البراءة"><img src="img/success.jpg" width="720" height="1081" alt="الاحتفال مع الموكلين بصدور حكم البراءة" loading="lazy"></button><figcaption>الاحتفال مع الموكلين بصدور حكم البراءة</figcaption></figure>
+      <figure class="m reveal" data-cat="occ"><button type="button" aria-label="تكبير: بمناسبة انتهاء الموسم القضائي"><img src="img/new0028.jpg" width="900" height="1125" alt="بمناسبة انتهاء الموسم القضائي" loading="lazy"></button><figcaption>بمناسبة انتهاء الموسم القضائي</figcaption></figure>
+      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف"><img src="img/new0037.jpg" width="843" height="1264" alt="المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف" loading="lazy"></button><figcaption>المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف</figcaption></figure>
+      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود بالروب"><img src="img/new0035.jpg" width="895" height="1280" alt="المستشار مصطفى جمال محمود بالروب" loading="lazy"></button><figcaption>المستشار مصطفى جمال محمود بالروب</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام مجمع المحاكم"><img src="img/court1.jpg" width="640" height="640" alt="أمام مجمع المحاكم" loading="lazy"></button><figcaption>أمام مجمع المحاكم</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الاستئناف"><img src="img/court2.jpg" width="640" height="640" alt="أمام محكمة الاستئناف" loading="lazy"></button><figcaption>أمام محكمة الاستئناف</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: قاعة المحكمة"><img src="img/court3.jpg" width="640" height="640" alt="قاعة المحكمة" loading="lazy"></button><figcaption>قاعة المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: محكمة استئناف القاهرة"><img src="img/court4.jpg" width="640" height="640" alt="محكمة استئناف القاهرة" loading="lazy"></button><figcaption>محكمة استئناف القاهرة</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الجنايات"><img src="img/new0034.jpg" width="853" height="1280" alt="أمام محكمة الجنايات" loading="lazy"></button><figcaption>أمام محكمة الجنايات</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: داخل قاعة المحكمة"><img src="img/new0032.jpg" width="900" height="1200" alt="داخل قاعة المحكمة" loading="lazy"></button><figcaption>داخل قاعة المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في قاعة المحكمة"><img src="img/new0031.jpg" width="900" height="727" alt="مع زميل في قاعة المحكمة" loading="lazy"></button><figcaption>مع زميل في قاعة المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء أمام المحكمة"><img src="img/colleagues.jpg" width="760" height="760" alt="مع الزملاء أمام المحكمة" loading="lazy"></button><figcaption>مع الزملاء أمام المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء داخل وزارة العدل"><img src="img/robe.jpg" width="760" height="1012" alt="مع الزملاء داخل وزارة العدل" loading="lazy"></button><figcaption>مع الزملاء داخل وزارة العدل</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في أروقة المحكمة"><img src="img/new0026.jpg" width="900" height="963" alt="مع زميل في أروقة المحكمة" loading="lazy"></button><figcaption>مع زميل في أروقة المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل بعد الجلسة"><img src="img/new0027.jpg" width="900" height="675" alt="مع زميل بعد الجلسة" loading="lazy"></button><figcaption>مع زميل بعد الجلسة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: في زيارة مع الزملاء"><img src="img/new0029.jpg" width="900" height="1200" alt="في زيارة مع الزملاء" loading="lazy"></button><figcaption>في زيارة مع الزملاء</figcaption></figure>
+      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: في استراحة داخل المحكمة"><img src="img/new0030.jpg" width="838" height="1280" alt="في استراحة داخل المحكمة" loading="lazy"></button><figcaption>في استراحة داخل المحكمة</figcaption></figure>
+      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: لقطات من العمل"><img src="img/moment.jpg" width="760" height="610" alt="لقطات من العمل" loading="lazy"></button><figcaption>لقطات من العمل</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: جولات في المحاكم"><img src="img/courts.jpg" width="640" height="1137" alt="جولات في المحاكم" loading="lazy"></button><figcaption>جولات في المحاكم</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: لقطات من الميدان"><img src="img/new0033.jpg" width="719" height="1280" alt="لقطات من الميدان" loading="lazy"></button><figcaption>لقطات من الميدان</figcaption></figure>
+      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: لقطات من ساحات المحاكم"><img src="img/new0036.jpg" width="719" height="1280" alt="لقطات من ساحات المحاكم" loading="lazy"></button><figcaption>لقطات من ساحات المحاكم</figcaption></figure>
     </div>
   </div>
 </section>
@@ -151,13 +156,14 @@
 <section class="section dark" id="catalog">
   <div class="container">
     <div class="head reveal"><span class="eyebrow">من كتالوج واتساب</span><h2>أعمالي ومقر المكتب</h2><p>صور ومنشورات من صفحة الأعمال على واتساب.</p></div>
-    <div class="cat">
-      <figure class="reveal"><img src="img/catalog-flyer.jpg" alt="إعلان أعمالي - المستشار مصطفى جمال محمود" loading="lazy"><figcaption>أعمالي</figcaption></figure>
-      <figure class="reveal"><img src="img/catalog-courts.jpg" alt="أيام الخير والتوفيق من كبار المحاكم" loading="lazy"><figcaption>أيام الخير والتوفيق من كبار المحاكم</figcaption></figure>
-      <figure class="reveal"><img src="img/catalog-zayed.jpg" alt="جنايات زايد" loading="lazy"><figcaption>جنايات زايد</figcaption></figure>
-      <figure class="reveal"><img src="img/catalog-40.jpg" alt="عامي الأربعين - سائلين الله خاتمة السعادة" loading="lazy"><figcaption>عامي الأربعين، سائلين الله خاتمة السعادة</figcaption></figure>
-      <figure class="reveal"><img src="img/catalog-office-sign.jpg" alt="لافتة مكتب المستشار مصطفى جمال محمود" loading="lazy"><figcaption>مقر مكتبنا الرئيسي في اللبيني، بجوار المطعم الصيني</figcaption></figure>
+    <div class="cat" id="cat">
+      <figure class="reveal"><button type="button" aria-label="تكبير: إعلان أعمالي - المستشار مصطفى جمال محمود"><img src="img/catalog-flyer.jpg" alt="إعلان أعمالي - المستشار مصطفى جمال محمود" loading="lazy"></button><figcaption>أعمالي</figcaption></figure>
+      <figure class="reveal"><button type="button" aria-label="تكبير: أيام الخير والتوفيق من كبار المحاكم"><img src="img/catalog-courts.jpg" alt="أيام الخير والتوفيق من كبار المحاكم" loading="lazy"></button><figcaption>أيام الخير والتوفيق من كبار المحاكم</figcaption></figure>
+      <figure class="reveal"><button type="button" aria-label="تكبير: جنايات زايد"><img src="img/catalog-zayed.jpg" alt="جنايات زايد" loading="lazy"></button><figcaption>جنايات زايد</figcaption></figure>
+      <figure class="reveal"><button type="button" aria-label="تكبير: عامي الأربعين - سائلين الله خاتمة السعادة"><img src="img/catalog-40.jpg" alt="عامي الأربعين - سائلين الله خاتمة السعادة" loading="lazy"></button><figcaption>عامي الأربعين، سائلين الله خاتمة السعادة</figcaption></figure>
+      <figure class="reveal"><button type="button" aria-label="تكبير: لافتة مكتب المستشار مصطفى جمال محمود"><img src="img/catalog-office-sign.jpg" alt="لافتة مكتب المستشار مصطفى جمال محمود" loading="lazy"></button><figcaption>مقر مكتبنا الرئيسي في اللبيني، بجوار المطعم الصيني</figcaption></figure>
     </div>
+    <p class="cat-hint">اسحب لرؤية المزيد ←</p>
   </div>
 </section>
 
@@ -201,7 +207,13 @@
   <svg viewBox="0 0 32 32" width="28" height="28" fill="#fff"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.7a10.7 10.7 0 0 1-5.5-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.700zm5.900-8c-.3-.2-1.900-.9-2.200-1s-.5-.2-.7.2-.8 1-1 1.200-.4.2-.7.1a8.800 8.800 0 0 1-4.400-3.800c-.3-.6.3-.5.9-1.700.1-.2 0-.4 0-.5l-1-2.300c-.2-.6-.5-.5-.7-.5h-.6a1.200 1.200 0 0 0-.9.400 3.700 3.700 0 0 0-1.100 2.700 6.400 6.400 0 0 0 1.300 3.400 14.600 14.600 0 0 0 5.600 5c2 .8 2.800.9 3.800.7a3.200 3.200 0 0 0 2.100-1.500 2.600 2.600 0 0 0 .2-1.500c-.1-.1-.3-.2-.6-.4z"/></svg>
 </a>
 
-<div class="lb" id="lb" hidden><button class="lb-x" aria-label="إغلاق">×</button><img alt=""></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="عرض الصورة">
+  <button class="lb-x" aria-label="إغلاق">×</button>
+  <button class="lb-n lb-prev" aria-label="السابقة">›</button>
+  <button class="lb-n lb-next" aria-label="التالية">‹</button>
+  <figure class="lb-fig"><img alt=""><figcaption></figcaption></figure>
+  <div class="lb-c"></div>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
