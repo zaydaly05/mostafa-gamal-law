@@ -149,43 +149,64 @@
   </div>
 </section>
 
-<section class="section dark" id="gallery">
+<section class="section dark gal-sec" id="gallery">
   <div class="container">
     <div class="head reveal"><span class="eyebrow">معرض الصور</span><h2>لحظات من ساحات العدالة</h2><p>من مجمع المحاكم ومحكمة استئناف القاهرة إلى لحظات الاحتفال مع الموكلين. اضغط على أي صورة لتكبيرها.</p></div>
-    <div class="chips reveal" id="chips" role="tablist" aria-label="تصفية الصور">
-      <button class="chip on" data-f="all" role="tab" aria-selected="true">الكل</button>
-      <button class="chip" data-f="court" role="tab" aria-selected="false">المحاكم</button>
-      <button class="chip" data-f="col" role="tab" aria-selected="false">مع الزملاء</button>
-      <button class="chip" data-f="occ" role="tab" aria-selected="false">مناسبات وتهاني</button>
-      <button class="chip" data-f="por" role="tab" aria-selected="false">صور شخصية</button>
+    <div class="cf" id="cf" role="region" aria-roledescription="carousel" aria-label="صور مميزة" tabindex="0">
+      <div class="cf-stage" id="cfTrack">
+        <figure class="cf-s" data-cat="occ"><button type="button" aria-label="تكبير: الاحتفال مع الموكلين بصدور حكم البراءة"><img src="img/success.jpg" width="720" height="1081" alt="الاحتفال مع الموكلين بصدور حكم البراءة" decoding="async"></button><figcaption>الاحتفال مع الموكلين بصدور حكم البراءة</figcaption></figure>
+        <figure class="cf-s" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف"><img src="img/new0037.jpg" width="843" height="1264" alt="المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف" decoding="async"></button><figcaption>المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف</figcaption></figure>
+        <figure class="cf-s" data-cat="occ"><button type="button" aria-label="تكبير: بمناسبة انتهاء الموسم القضائي"><img src="img/new0028.jpg" width="900" height="1125" alt="بمناسبة انتهاء الموسم القضائي" decoding="async"></button><figcaption>بمناسبة انتهاء الموسم القضائي</figcaption></figure>
+        <figure class="cf-s" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود بالروب"><img src="img/new0035.jpg" width="895" height="1280" alt="المستشار مصطفى جمال محمود بالروب" loading="lazy" decoding="async"></button><figcaption>المستشار مصطفى جمال محمود بالروب</figcaption></figure>
+        <figure class="cf-s" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء داخل وزارة العدل"><img src="img/robe.jpg" width="760" height="1012" alt="مع الزملاء داخل وزارة العدل" loading="lazy" decoding="async"></button><figcaption>مع الزملاء داخل وزارة العدل</figcaption></figure>
+        <figure class="cf-s" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في قاعة المحكمة"><img src="img/new0031.jpg" width="900" height="727" alt="مع زميل في قاعة المحكمة" loading="lazy" decoding="async"></button><figcaption>مع زميل في قاعة المحكمة</figcaption></figure>
+        <figure class="cf-s" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الاستئناف"><img src="img/court2.jpg" width="640" height="640" alt="أمام محكمة الاستئناف" loading="lazy" decoding="async"></button><figcaption>أمام محكمة الاستئناف</figcaption></figure>
+        <figure class="cf-s" data-cat="por"><button type="button" aria-label="تكبير: في استراحة داخل المحكمة"><img src="img/new0030.jpg" width="838" height="1280" alt="في استراحة داخل المحكمة" loading="lazy" decoding="async"></button><figcaption>في استراحة داخل المحكمة</figcaption></figure>
+      </div>
+      <button class="cf-nav cf-prev" type="button" aria-label="السابق">‹</button>
+      <button class="cf-nav cf-next" type="button" aria-label="التالي">›</button>
+      <div class="cf-meta">
+        <div class="cf-info"><span class="cf-no" data-no-i18n></span><span class="cf-cap" id="cfCap" aria-live="polite"></span></div>
+        <div class="cf-ctl"><div class="cf-dots" id="cfDots"></div><button class="cf-play" id="cfPlay" type="button" aria-label="إيقاف التشغيل التلقائي">❚❚</button></div>
+      </div>
+      <div class="cf-bar" aria-hidden="true"><i id="cfBar"></i></div>
     </div>
-    <div class="masonry" id="masonry">
-      <figure class="m reveal" data-cat="occ"><button type="button" aria-label="تكبير: الاحتفال مع الموكلين بصدور حكم البراءة"><img src="img/success.jpg" width="720" height="1081" alt="الاحتفال مع الموكلين بصدور حكم البراءة" loading="lazy"></button><figcaption>الاحتفال مع الموكلين بصدور حكم البراءة</figcaption></figure>
-      <figure class="m reveal" data-cat="occ"><button type="button" aria-label="تكبير: بمناسبة انتهاء الموسم القضائي"><img src="img/new0028.jpg" width="900" height="1125" alt="بمناسبة انتهاء الموسم القضائي" loading="lazy"></button><figcaption>بمناسبة انتهاء الموسم القضائي</figcaption></figure>
-      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف"><img src="img/new0037.jpg" width="843" height="1264" alt="المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف" loading="lazy"></button><figcaption>المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف</figcaption></figure>
-      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود بالروب"><img src="img/new0035.jpg" width="895" height="1280" alt="المستشار مصطفى جمال محمود بالروب" loading="lazy"></button><figcaption>المستشار مصطفى جمال محمود بالروب</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام مجمع المحاكم"><img src="img/court1.jpg" width="640" height="640" alt="أمام مجمع المحاكم" loading="lazy"></button><figcaption>أمام مجمع المحاكم</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الاستئناف"><img src="img/court2.jpg" width="640" height="640" alt="أمام محكمة الاستئناف" loading="lazy"></button><figcaption>أمام محكمة الاستئناف</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: قاعة المحكمة"><img src="img/court3.jpg" width="640" height="640" alt="قاعة المحكمة" loading="lazy"></button><figcaption>قاعة المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: محكمة استئناف القاهرة"><img src="img/court4.jpg" width="640" height="640" alt="محكمة استئناف القاهرة" loading="lazy"></button><figcaption>محكمة استئناف القاهرة</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الجنايات"><img src="img/new0034.jpg" width="853" height="1280" alt="أمام محكمة الجنايات" loading="lazy"></button><figcaption>أمام محكمة الجنايات</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: داخل قاعة المحكمة"><img src="img/new0032.jpg" width="900" height="1200" alt="داخل قاعة المحكمة" loading="lazy"></button><figcaption>داخل قاعة المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في قاعة المحكمة"><img src="img/new0031.jpg" width="900" height="727" alt="مع زميل في قاعة المحكمة" loading="lazy"></button><figcaption>مع زميل في قاعة المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء أمام المحكمة"><img src="img/colleagues.jpg" width="760" height="760" alt="مع الزملاء أمام المحكمة" loading="lazy"></button><figcaption>مع الزملاء أمام المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء داخل وزارة العدل"><img src="img/robe.jpg" width="760" height="1012" alt="مع الزملاء داخل وزارة العدل" loading="lazy"></button><figcaption>مع الزملاء داخل وزارة العدل</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في أروقة المحكمة"><img src="img/new0026.jpg" width="900" height="963" alt="مع زميل في أروقة المحكمة" loading="lazy"></button><figcaption>مع زميل في أروقة المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: مع زميل بعد الجلسة"><img src="img/new0027.jpg" width="900" height="675" alt="مع زميل بعد الجلسة" loading="lazy"></button><figcaption>مع زميل بعد الجلسة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: في زيارة مع الزملاء"><img src="img/new0029.jpg" width="900" height="1200" alt="في زيارة مع الزملاء" loading="lazy"></button><figcaption>في زيارة مع الزملاء</figcaption></figure>
-      <figure class="m reveal" data-cat="por"><button type="button" aria-label="تكبير: في استراحة داخل المحكمة"><img src="img/new0030.jpg" width="838" height="1280" alt="في استراحة داخل المحكمة" loading="lazy"></button><figcaption>في استراحة داخل المحكمة</figcaption></figure>
-      <figure class="m reveal" data-cat="col"><button type="button" aria-label="تكبير: لقطات من العمل"><img src="img/moment.jpg" width="760" height="610" alt="لقطات من العمل" loading="lazy"></button><figcaption>لقطات من العمل</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: جولات في المحاكم"><img src="img/courts.jpg" width="640" height="1137" alt="جولات في المحاكم" loading="lazy"></button><figcaption>جولات في المحاكم</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: لقطات من الميدان"><img src="img/new0033.jpg" width="719" height="1280" alt="لقطات من الميدان" loading="lazy"></button><figcaption>لقطات من الميدان</figcaption></figure>
-      <figure class="m reveal" data-cat="court"><button type="button" aria-label="تكبير: لقطات من ساحات المحاكم"><img src="img/new0036.jpg" width="719" height="1280" alt="لقطات من ساحات المحاكم" loading="lazy"></button><figcaption>لقطات من ساحات المحاكم</figcaption></figure>
+    <div class="gtabs" id="chips" role="tablist" aria-label="تصفية الصور">
+      <button class="gtab on" data-f="all" role="tab" aria-selected="true"><b>الكل</b><i class="cnt" data-no-i18n></i></button>
+      <button class="gtab" data-f="court" role="tab" aria-selected="false"><b>المحاكم</b><i class="cnt" data-no-i18n></i></button>
+      <button class="gtab" data-f="col" role="tab" aria-selected="false"><b>مع الزملاء</b><i class="cnt" data-no-i18n></i></button>
+      <button class="gtab" data-f="occ" role="tab" aria-selected="false"><b>مناسبات وتهاني</b><i class="cnt" data-no-i18n></i></button>
+      <button class="gtab" data-f="por" role="tab" aria-selected="false"><b>صور شخصية</b><i class="cnt" data-no-i18n></i></button>
+    </div>
+    <div class="jg-wrap">
+      <div class="jg" id="masonry">
+        <figure class="jt" data-cat="occ"><button type="button" aria-label="تكبير: الاحتفال مع الموكلين بصدور حكم البراءة"><img src="img/success.jpg" width="720" height="1081" alt="الاحتفال مع الموكلين بصدور حكم البراءة" loading="lazy" decoding="async"></button><figcaption>الاحتفال مع الموكلين بصدور حكم البراءة</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في أروقة المحكمة"><img src="img/new0026.jpg" width="900" height="963" alt="مع زميل في أروقة المحكمة" loading="lazy" decoding="async"></button><figcaption>مع زميل في أروقة المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: أمام مجمع المحاكم"><img src="img/court1.jpg" width="640" height="640" alt="أمام مجمع المحاكم" loading="lazy" decoding="async"></button><figcaption>أمام مجمع المحاكم</figcaption></figure>
+        <figure class="jt" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف"><img src="img/new0037.jpg" width="843" height="1264" alt="المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف" loading="lazy" decoding="async"></button><figcaption>المستشار مصطفى جمال محمود – محامي جنايات قيد الاستئناف</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: مع زميل بعد الجلسة"><img src="img/new0027.jpg" width="900" height="675" alt="مع زميل بعد الجلسة" loading="lazy" decoding="async"></button><figcaption>مع زميل بعد الجلسة</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الاستئناف"><img src="img/court2.jpg" width="640" height="640" alt="أمام محكمة الاستئناف" loading="lazy" decoding="async"></button><figcaption>أمام محكمة الاستئناف</figcaption></figure>
+        <figure class="jt" data-cat="occ"><button type="button" aria-label="تكبير: بمناسبة انتهاء الموسم القضائي"><img src="img/new0028.jpg" width="900" height="1125" alt="بمناسبة انتهاء الموسم القضائي" loading="lazy" decoding="async"></button><figcaption>بمناسبة انتهاء الموسم القضائي</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: قاعة المحكمة"><img src="img/court3.jpg" width="640" height="640" alt="قاعة المحكمة" loading="lazy" decoding="async"></button><figcaption>قاعة المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: مع زميل في قاعة المحكمة"><img src="img/new0031.jpg" width="900" height="727" alt="مع زميل في قاعة المحكمة" loading="lazy" decoding="async"></button><figcaption>مع زميل في قاعة المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="por"><button type="button" aria-label="تكبير: المستشار مصطفى جمال محمود بالروب"><img src="img/new0035.jpg" width="895" height="1280" alt="المستشار مصطفى جمال محمود بالروب" loading="lazy" decoding="async"></button><figcaption>المستشار مصطفى جمال محمود بالروب</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: في زيارة مع الزملاء"><img src="img/new0029.jpg" width="900" height="1200" alt="في زيارة مع الزملاء" loading="lazy" decoding="async"></button><figcaption>في زيارة مع الزملاء</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: محكمة استئناف القاهرة"><img src="img/court4.jpg" width="640" height="640" alt="محكمة استئناف القاهرة" loading="lazy" decoding="async"></button><figcaption>محكمة استئناف القاهرة</figcaption></figure>
+        <figure class="jt" data-cat="por"><button type="button" aria-label="تكبير: في استراحة داخل المحكمة"><img src="img/new0030.jpg" width="838" height="1280" alt="في استراحة داخل المحكمة" loading="lazy" decoding="async"></button><figcaption>في استراحة داخل المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء داخل وزارة العدل"><img src="img/robe.jpg" width="760" height="1012" alt="مع الزملاء داخل وزارة العدل" loading="lazy" decoding="async"></button><figcaption>مع الزملاء داخل وزارة العدل</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: أمام محكمة الجنايات"><img src="img/new0034.jpg" width="853" height="1280" alt="أمام محكمة الجنايات" loading="lazy" decoding="async"></button><figcaption>أمام محكمة الجنايات</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: مع الزملاء أمام المحكمة"><img src="img/colleagues.jpg" width="760" height="760" alt="مع الزملاء أمام المحكمة" loading="lazy" decoding="async"></button><figcaption>مع الزملاء أمام المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: داخل قاعة المحكمة"><img src="img/new0032.jpg" width="900" height="1200" alt="داخل قاعة المحكمة" loading="lazy" decoding="async"></button><figcaption>داخل قاعة المحكمة</figcaption></figure>
+        <figure class="jt" data-cat="col"><button type="button" aria-label="تكبير: لقطات من العمل"><img src="img/moment.jpg" width="760" height="610" alt="لقطات من العمل" loading="lazy" decoding="async"></button><figcaption>لقطات من العمل</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: جولات في المحاكم"><img src="img/courts.jpg" width="640" height="1137" alt="جولات في المحاكم" loading="lazy" decoding="async"></button><figcaption>جولات في المحاكم</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: لقطات من الميدان"><img src="img/new0033.jpg" width="719" height="1280" alt="لقطات من الميدان" loading="lazy" decoding="async"></button><figcaption>لقطات من الميدان</figcaption></figure>
+        <figure class="jt" data-cat="court"><button type="button" aria-label="تكبير: لقطات من ساحات المحاكم"><img src="img/new0036.jpg" width="719" height="1280" alt="لقطات من ساحات المحاكم" loading="lazy" decoding="async"></button><figcaption>لقطات من ساحات المحاكم</figcaption></figure>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section dark" id="catalog">
+<section class="section dark board-sec" id="catalog">
   <div class="container">
     <div class="head reveal"><span class="eyebrow">من كتالوج واتساب</span><h2>أعمالي ومقر المكتب</h2><p>صور ومنشورات من صفحة الأعمال على واتساب.</p></div>
     <div class="cat" id="cat">

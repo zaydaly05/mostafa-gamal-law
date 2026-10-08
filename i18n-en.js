@@ -161,6 +161,11 @@
     "السابقة": "Previous",
     "التالية": "Next",
     "بوابتي": "My portal",
+    "السابق": "Previous",
+    "التالي": "Next",
+    "إيقاف التشغيل التلقائي": "Pause autoplay",
+    "تشغيل تلقائي": "Play autoplay",
+    "صور مميزة": "Featured photos",
     "فتح قضية": "Open a case",
     "جارٍ التحميل…": "Loading…"
   });
