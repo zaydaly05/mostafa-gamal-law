@@ -48,6 +48,26 @@
       async getUser() { var r = await sb.auth.getSession(); return r.data.session ? r.data.session.user : null; },
       onAuth(cb) { sb.auth.onAuthStateChange(function (ev, s) { setTimeout(function () { cb(ev, s && s.user); }, 0); }); },
       async signUp(d) {
+        /* التسجيل عبر خدمة آمنة (Edge Function) تنشئ حسابًا مؤكدًا فورًا دون رسالة تأكيد */
+        var viaFn = null;
+        try {
+          var res = await fetch(CFG.SUPABASE_URL + '/functions/v1/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', apikey: CFG.SUPABASE_ANON_KEY },
+            body: JSON.stringify({ email: d.email, password: d.password, full_name: d.full_name, phone: d.phone })
+          });
+          if (res.status === 409) throw new Error('هذا البريد الإلكتروني مسجّل بالفعل، جرّب تسجيل الدخول');
+          if (res.status === 400) {
+            var j = await res.json().catch(function () { return {}; });
+            var m = { email: 'صيغة البريد الإلكتروني غير صحيحة', password: 'كلمة المرور يجب ألا تقل عن ٦ أحرف', name: 'يرجى كتابة الاسم الكامل', phone: 'رقم الهاتف غير صحيح' }[j.error];
+            throw new Error(m || 'تعذّر إنشاء الحساب، يرجى المحاولة مرة أخرى');
+          }
+          viaFn = res.ok;
+        } catch (e) { if (/[\u0600-\u06FF]/.test(e.message)) throw e; viaFn = null; }
+        if (viaFn) {
+          must(await sb.auth.signInWithPassword({ email: d.email, password: d.password }));
+          return { user: null, needsConfirm: false };
+        }
         var r = await sb.auth.signUp({ email: d.email, password: d.password, options: { data: { full_name: d.full_name, phone: d.phone }, emailRedirectTo: redirect } });
         if (r.error) throw new Error(arError(r.error));
         return { user: r.data.user, needsConfirm: !r.data.session };

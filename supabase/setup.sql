@@ -1,7 +1,7 @@
 -- =====================================================================
 --  إعداد قاعدة البيانات لموقع المستشار مصطفى جمال (Supabase)
 --  الصق هذا الملف كاملًا في: Supabase → SQL Editor → New query → Run
---  آمن للتشغيل أكثر من مرة.
+--  ملاحظة: قاعدة بيانات المشروع الحالي مُطبَّقة بالفعل، هذا الملف للمرجع/إعادة الإنشاء.
 -- =====================================================================
 
 -- 1) بريد المديرين: أي حساب يُسجَّل بأحد هذه البريدات يصبح "مدير" تلقائيًا.
@@ -175,6 +175,13 @@ create policy case_docs_insert on storage.objects for insert to authenticated
 drop policy if exists case_docs_delete on storage.objects;
 create policy case_docs_delete on storage.objects for delete
   using (bucket_id = 'case-docs' and (public.is_admin() or owner = auth.uid()));
+
+-- 8.5) إغلاق دوال مساعدة من واجهة الـ API العامة
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.apply_case_update() from public, anon, authenticated;
+revoke execute on function public.case_created() from public, anon, authenticated;
+revoke execute on function public.is_admin() from public, anon;
+grant execute on function public.is_admin() to authenticated;
 
 -- 9) إن كان لديك حسابات مسجلة مسبقًا ببريد مدير، فعّلها
 update public.profiles set role = 'admin'
