@@ -80,25 +80,25 @@ const loader=$('#loader'),heroGo=()=>document.querySelector('.hero').classList.a
   const setP=(p)=>{bar.style.width=p+'%';pct.textContent=new Intl.NumberFormat('ar-EG').format(Math.round(p))+'٪';};
   let finished=false,loaded=false,assembled=false,tStart=performance.now();
   const finish=()=>{if(finished)return;finished=true;setP(100);stage.classList.add('final');loader.classList.add('done');
-    setTimeout(heroGo,reduce?0:450);setTimeout(()=>{loader.classList.add('gone');},reduce?500:1700);};
+    setTimeout(heroGo,reduce?0:450);setTimeout(()=>{loader.classList.add("gone");},reduce?500:1750);};
   skip.addEventListener('click',finish);
-  addEventListener('load',()=>{loaded=true;if(assembled)setTimeout(finish,700);});
-  setTimeout(finish,9000);
+  addEventListener('load',()=>{loaded=true;if(assembled)setTimeout(finish,1000);});
+  setTimeout(finish,16000);
   if(reduce){pieces.forEach((p)=>{p.tint.style.opacity=0;p.edge.style.opacity=0;});name.classList.add('on');assembled=true;setP(100);setTimeout(()=>{if(loaded||document.readyState==='complete')finish();},500);return;}
   const order=pieces.map((_,k)=>k).sort(()=>rnd()-.5);
-  const total=2100;
+  const K=2,total=2100*K;
   pieces.forEach((p,k)=>{
-    const rank=order.indexOf(k),delay=200+rank*(1100/pieces.length),dur=900+rnd()*300;
+    const rank=order.indexOf(k),delay=(200+rank*(1100/pieces.length))*K,dur=(900+rnd()*300)*K;
     const ang=rnd()*6.283,dist=420+rnd()*380,dx=Math.cos(ang)*dist,dy=Math.sin(ang)*dist,rot=(rnd()-.5)*720,sc=.3+rnd()*1.4;
     p.g.animate([{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(${sc})`,opacity:0},{opacity:1,offset:.25},{transform:'none',opacity:1}],{duration:dur,delay,easing:'cubic-bezier(.3,1.25,.45,1)',fill:'both'});
     const land=delay+dur*.82;
-    p.tint.animate([{opacity:.9},{opacity:.9,offset:.55},{opacity:0}],{duration:land+500,easing:'ease-out',fill:'both'});
-    p.edge.animate([{opacity:.95},{opacity:.95,offset:.8},{opacity:.0}],{duration:land+900,easing:'ease-in',fill:'both'});
-    setTimeout(()=>{p.g.animate([{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});},land);
+    p.tint.animate([{opacity:.9},{opacity:.9,offset:.55},{opacity:0}],{duration:land+1000,easing:'ease-out',fill:'both'});
+    p.edge.animate([{opacity:.95},{opacity:.95,offset:.8},{opacity:.0}],{duration:land+1500,easing:'ease-in',fill:'both'});
+    setTimeout(()=>{p.g.animate([{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:520,easing:'ease-out'});},land);
   });
   const t0=performance.now(),tick=()=>{const t=performance.now()-t0,p=Math.min(t/(total+300),1);if(!finished)setP(Math.min(p*96,96));if(p<1&&!finished)requestAnimationFrame(tick);};requestAnimationFrame(tick);
-  setTimeout(()=>{assembled=true;stage.classList.add('final');stage.animate([{filter:'drop-shadow(0 0 0 rgba(255,241,193,0)) brightness(1)'},{filter:'drop-shadow(0 0 50px rgba(255,241,193,.95)) brightness(1.5)'},{filter:'drop-shadow(0 18px 40px rgba(0,0,0,.6)) brightness(1)'}],{duration:900,easing:'ease-out'});name.classList.add('on');
-    if(loaded||document.readyState==='complete')setTimeout(finish,1500);},total+500);
+  setTimeout(()=>{assembled=true;stage.classList.add('final');stage.animate([{filter:'drop-shadow(0 0 0 rgba(255,241,193,0)) brightness(1)'},{filter:'drop-shadow(0 0 50px rgba(255,241,193,.95)) brightness(1.5)'},{filter:'drop-shadow(0 18px 40px rgba(0,0,0,.6)) brightness(1)'}],{duration:1500,easing:'ease-out'});name.classList.add('on');
+    if(loaded||document.readyState==='complete')setTimeout(finish,1200);},total+500);
 })();
 
 /* stagger reveals inside grids */
