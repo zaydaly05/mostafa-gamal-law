@@ -301,3 +301,51 @@ html{-webkit-text-size-adjust:100%}
 .pz-flash{animation:pzflash .7s ease-out}
 @keyframes pzflash{0%{filter:brightness(2.2)}100%{filter:none}}
 @media (prefers-reduced-motion:reduce){.loader{transition:opacity .4s!important;clip-path:none!important}.loader.done{opacity:0}.intro-glow,.intro-name span{animation:none!important}}
+
+/* ===== الوضع الداكن / الفاتح ===== */
+html[data-theme=dark]{color-scheme:dark;--paper:#0a0f1d;--ink:#e6eaf3;--muted:#9aa5bd;--alt:#101a33;--surface:#131d36;--line:rgba(255,255,255,.12);--gold-t:#e6c97a;--body-txt:#b9c1d3;--navtxt:#fff;--navbg:rgba(11,18,32,.92)}
+html[data-theme=light]{color-scheme:light;--paper:#f7f4ee;--ink:#1a2238;--muted:#6b7385;--alt:#e9edf5;--surface:#fff;--line:#dde3ee;--gold-t:#8a6a1c;--body-txt:#3b4458;--navtxt:#1a2238;--navbg:rgba(255,255,255,.93)}
+html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:background-color .5s,color .5s,border-color .5s,box-shadow .5s!important}
+body{background:var(--paper);color:var(--ink)}
+.section.dark{background:var(--alt);color:var(--ink)}
+.head p{color:var(--muted)}
+.eyebrow{color:var(--gold-t)}.eyebrow::before{background:var(--gold-t)}
+.about-grid p{color:var(--body-txt)}
+.quote{background:var(--surface);color:var(--ink)}
+.timeline b{color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line)}
+.card p{color:var(--muted)}.card h3{color:var(--gold-t)}
+.cta-card{background:linear-gradient(135deg,var(--gold2),var(--gold))}.cta-card h3,.cta-card p{color:#1a1405}
+.chip{border-color:var(--line);color:var(--ink)}
+.m,.cat figure{background:var(--surface);border-color:var(--line)}
+.cat button{background:var(--alt)}.cat figcaption{color:var(--ink)}.cat-hint{color:var(--muted)}
+.form{background:var(--surface)}
+.form input,.form select,.form textarea{background:var(--paper);border-color:var(--line);color:var(--ink)}
+.marquee{background:var(--alt);border-color:var(--line)}.mq-track{color:var(--gold-t)}
+.dark-ghost{border-color:var(--ink);color:var(--ink)}.dark-ghost:hover{background:var(--ink);color:var(--paper)}
+/* الشريط العلوي */
+.brand{color:var(--navtxt)}#menu{color:var(--navtxt)}.burger span{background:var(--navtxt)}
+.nav.solid{background:var(--navbg)}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer;transition:.25s;flex:none}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+html[data-theme=dark] .i-sun{display:block}html[data-theme=dark] .i-moon{display:none}
+html[data-theme=light] .i-sun{display:none}html[data-theme=light] .i-moon{display:block}
+.btn-nav{border-color:currentColor;color:inherit}.btn-nav:hover{border-color:var(--gold);color:var(--gold)}
+.btn-outline{border-color:var(--ink);color:var(--ink)}.btn-outline:hover{background:var(--ink);color:var(--paper)}
+.cards.c4{grid-template-columns:repeat(4,1fr)}
+.cta.center{justify-content:center;margin-top:34px}
+@media (max-width:1100px){.cards.c4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.cards.c4{grid-template-columns:1fr}}
+/* الوضع الفاتح: الواجهة الأولى */
+html[data-theme=light] .hero{background:var(--paper);color:var(--ink)}
+html[data-theme=light] .hero-bg{background:radial-gradient(900px 500px at 15% 20%,rgba(201,162,75,.28),transparent 60%),radial-gradient(700px 500px at 90% 90%,rgba(100,140,220,.18),transparent 60%),linear-gradient(180deg,#f7f4ee,#efe8d8)}
+html[data-theme=light] .lead{color:var(--body-txt)}
+html[data-theme=light] .pill{color:var(--gold-t);border-color:rgba(138,106,28,.5)}
+html[data-theme=light] .hero h1 em{background:linear-gradient(135deg,#b88a1f,#8a6a1c);-webkit-background-clip:text;background-clip:text}
+html[data-theme=light] .hero-tags li{color:var(--ink);background:rgba(11,18,32,.05);border-color:rgba(11,18,32,.14)}
+html[data-theme=light] .btn-ghost{border-color:rgba(11,18,32,.45);color:var(--ink)}
+html[data-theme=light] .btn-ghost:hover{background:var(--ink);color:#fff}
+html[data-theme=light] .wm{opacity:.12}
+html[data-theme=light] .dust{opacity:.5}
+html[data-theme=light] .ring{border-color:rgba(138,106,28,.5)}
+@media (max-width:960px){#menu{background:var(--navbg)}#menu .icon-btn{align-self:center}}

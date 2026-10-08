@@ -158,3 +158,11 @@ if(!reduce&&fine){
   new IntersectionObserver((es)=>{run=es[0].isIntersecting;if(run)raf(draw);}).observe(hero);
   size();addEventListener('resize',size);})();
 document.querySelectorAll('#cat figure').forEach((f)=>f.classList.add('in'));
+
+/* حالة تسجيل الدخول: غيّر أزرار الشريط عند وجود جلسة */
+(function(){
+  var has=false;try{has=!!localStorage.getItem('demo_session_v1');for(var i=0;i<localStorage.length&&!has;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k))has=true;}}catch(e){}
+  if(!has)return;var l=$('#loginLink'),s=$('#signupLink');
+  if(l){l.textContent='بوابتي';l.href='portal.html#/dashboard';}
+  if(s){s.textContent='فتح قضية';s.href='portal.html#/new';}
+})();
