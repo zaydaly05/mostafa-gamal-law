@@ -273,3 +273,13 @@ html{-webkit-text-size-adjust:100%}
   .timeline::before,.eyebrow::before{transform:none}.loader{display:none!important}.dust{display:none}
 }
 .clist a+a{display:block;margin-top:2px}
+
+/* logo */
+.brand-logo{width:54px;height:54px;border-radius:50%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));transition:transform .6s}
+.brand:hover .brand-logo{transform:rotate(360deg)}
+.loader img{width:150px;height:150px;animation:logoin 1.4s ease-in-out infinite}
+@keyframes logoin{0%,100%{transform:scale(.92) rotate(-4deg);filter:drop-shadow(0 0 0 rgba(230,201,122,0))}50%{transform:scale(1.04) rotate(4deg);filter:drop-shadow(0 0 28px rgba(230,201,122,.55))}}
+.hero-bg{overflow:hidden}
+.hero-bg::after{display:none}
+.wm{position:absolute;inset-inline-start:-90px;bottom:-130px;width:520px;max-width:80vw;opacity:.07;animation:spin 120s linear infinite;pointer-events:none}
+.foot .brand-logo{width:64px;height:64px}

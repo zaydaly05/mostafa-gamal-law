@@ -10,6 +10,8 @@
 <meta property="og:image" content="img/hero.jpg">
 <meta property="og:locale" content="ar_EG">
 <meta name="theme-color" content="#0b1220">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/logo-96.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
@@ -17,11 +19,11 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="loader" id="loader" aria-hidden="true"><span>⚖</span></div>
+<div class="loader" id="loader" aria-hidden="true"><img src="img/logo.webp" width="150" height="150" alt=""></div>
 <div class="progress" id="progress"></div>
 
 <header class="nav" id="nav">
-  <a class="brand" href="#top"><span class="brand-mark">⚖</span><span>مصطفى جمال</span></a>
+  <a class="brand" href="#top" aria-label="المستشار مصطفى جمال"><img class="brand-logo" src="img/logo-96.webp" width="46" height="46" alt="شعار المستشار القانوني مصطفى جمال"><span>مصطفى جمال</span></a>
   <button class="burger" id="burger" aria-label="القائمة"><span></span><span></span><span></span></button>
   <nav id="menu">
     <a href="#about">نبذة</a>
@@ -36,7 +38,7 @@
 
 <main id="top">
 <section class="hero">
-  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-bg" id="heroBg"><img class="wm" src="img/logo.webp" alt="" aria-hidden="true"></div>
   <canvas class="dust" id="dust" aria-hidden="true"></canvas>
   <div class="container hero-grid">
     <div class="hero-text reveal">
@@ -198,7 +200,7 @@
 
 <footer class="foot">
   <div class="container">
-    <div class="brand"><span class="brand-mark">⚖</span><span>المستشار مصطفى جمال</span></div>
+    <div class="brand"><img class="brand-logo" src="img/logo-96.webp" width="46" height="46" alt="" loading="lazy"><span>المستشار مصطفى جمال</span></div>
     <p>محامي جنايات ومستشار قانوني · شارع مصرف اللبيني ١٧٢، الجيزة</p>
     <small>© <span id="yr"></span> جميع الحقوق محفوظة</small>
   </div>
