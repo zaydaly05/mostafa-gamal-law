@@ -145,3 +145,8 @@ html[data-theme=light] .b-info{color:#2459c4}html[data-theme=light] .b-warn{colo
 }
 html[data-theme=dark] .i-sun{display:block}html[data-theme=dark] .i-moon{display:none}
 html[data-theme=light] .i-sun{display:none}html[data-theme=light] .i-moon{display:block}
+
+.note.small{font-size:.88rem;text-align:start}.note.ok{background:rgba(46,184,120,.14);color:var(--p-txt)}
+.wa-link{color:var(--gold);font-weight:700}
+.resetbox{margin-top:16px;padding-top:14px;border-top:1px solid var(--p-line)}.resetbox h4{margin-bottom:2px}.resetbox p{font-size:.88rem;margin-bottom:10px}
+.pwshow{margin-top:12px;padding:12px;border-radius:12px;background:var(--p-surface2);display:grid;gap:8px}.pwshow b{font-size:1.4rem;letter-spacing:.08em;color:var(--gold);word-break:break-all}

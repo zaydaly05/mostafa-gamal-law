@@ -104,12 +104,16 @@
     };
   }
   function viewForgot() {
-    app.innerHTML = authShell('استعادة كلمة المرور', 'سنرسل لك رابطًا لإعادة تعيينها', '<form id="f" class="form-p" novalidate>' +
+    app.innerHTML = authShell('استعادة كلمة المرور', 'اكتب بريدك وسنرسل لك رابط إعادة التعيين', '<form id="f" class="form-p" novalidate>' +
       field('email', 'البريد الإلكتروني', 'type="email" dir="ltr" inputmode="email" required placeholder="اكتب بريدك الإلكتروني"') +
-      '<button class="btn btn-gold block" type="submit">إرسال الرابط</button><div class="links"><a href="#/login">العودة لتسجيل الدخول</a></div></form>');
+      '<button class="btn btn-gold block" type="submit">إرسال الرابط</button><div id="fmsg"></div>' +
+      '<div class="note small">إن لم تصلك الرسالة خلال دقائق (راجع البريد المزعج أيضًا)، أو لم تكن مسجّلًا بهذا البريد، تواصل مع المكتب وسيعيدون تعيين كلمة مرورك فورًا:<br><a class="wa-link" href="https://wa.me/201229403351" target="_blank" rel="noopener">راسلنا على واتساب</a> &nbsp;·&nbsp; <a dir="ltr" href="tel:+201229403351">01229403351</a></div>' +
+      '<div class="links"><a href="#/login">العودة لتسجيل الدخول</a></div></form>');
     document.getElementById('f').onsubmit = async function (e) {
-      e.preventDefault(); var b = e.target.querySelector('button'); btnBusy(b, true, 'جارٍ الإرسال…');
-      try { await API.resetPassword(e.target.email.value.trim()); toast('تم إرسال الرابط إلى بريدك'); } catch (er) { toast(er.message, 'err'); }
+      e.preventDefault(); var f = e.target, b = f.querySelector('button'), em = f.email.value.trim();
+      if (!/^\S+@\S+\.\S{2,}$/.test(em)) return toast('اكتب بريدًا إلكترونيًا صحيحًا', 'err');
+      btnBusy(b, true, 'جارٍ الإرسال…');
+      try { await API.resetPassword(em); document.getElementById('fmsg').innerHTML = '<div class="note ok">إن كان هذا البريد مسجّلًا لدينا فسيصلك رابط إعادة التعيين خلال دقائق.</div>'; toast('تم الطلب'); } catch (er) { toast(er.message, 'err'); }
       btnBusy(b, false);
     };
   }
@@ -317,7 +321,23 @@
       var b = e.target.closest('[data-e]'); if (!b) return; var u = users.find(function (x) { return x.id === b.dataset.e; });
       var m = modal('<h3>تعديل بيانات العميل</h3><form id="uf2" class="form-p" novalidate>' + field('full_name', 'الاسم', 'value="' + esc(u.full_name) + '"') + field('phone', 'الهاتف', 'dir="ltr" value="' + esc(u.phone) + '"') + field('address', 'العنوان', 'value="' + esc(u.address) + '"') +
         '<label class="f"><span>الصلاحية</span><select name="role"><option value="customer"' + (u.role === 'customer' ? ' selected' : '') + '>عميل</option><option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>مدير (كل الصلاحيات)</option></select></label>' +
-        '<div class="row end"><button type="button" class="btn btn-ghost-d" data-close="no">إلغاء</button><button class="btn btn-gold" type="submit">حفظ</button></div></form>');
+        '<div class="row end"><button type="button" class="btn btn-ghost-d" data-close="no">إلغاء</button><button class="btn btn-gold" type="submit">حفظ</button></div></form>' +
+        '<div class="resetbox"><h4>كلمة المرور</h4><p class="muted">يمكنك توليد كلمة مرور مؤقتة جديدة وإرسالها للعميل (مفيدة إن نسيها).</p><button type="button" class="btn btn-ghost-d sm" id="rst">إعادة تعيين كلمة المرور</button><div id="rstout"></div></div>');
+      var armed = false;
+      m.box.querySelector('#rst').onclick = async function () {
+        var btn = this;
+        if (!armed) { armed = true; btn.textContent = 'اضغط مرة أخرى للتأكيد'; btn.classList.add('btn-danger'); setTimeout(function () { armed = false; btn.textContent = 'إعادة تعيين كلمة المرور'; btn.classList.remove('btn-danger'); }, 5000); return; }
+        armed = false; btn.disabled = true; btn.textContent = 'جارٍ التنفيذ…';
+        try {
+          var pw = await API.adminResetPassword(u.id);
+          var ph = String(u.phone || '').replace(/[^0-9]/g, ''); if (ph.charAt(0) === '0') ph = '20' + ph.slice(1);
+          var msg = 'السلام عليكم، تم إعادة تعيين كلمة مرور حسابك في بوابة العملاء.\nكلمة المرور المؤقتة: ' + pw + '\nيرجى تسجيل الدخول وتغييرها من «ملفي الشخصي».';
+          m.box.querySelector('#rstout').innerHTML = '<div class="pwshow"><span>كلمة المرور المؤقتة:</span><b dir="ltr" id="pwv">' + esc(pw) + '</b><div class="row"><button type="button" class="btn btn-ghost-d sm" id="pwc">نسخ</button>' + (ph ? '<a class="btn btn-gold sm" target="_blank" rel="noopener" href="https://wa.me/' + ph + '?text=' + encodeURIComponent(msg) + '">إرسال عبر واتساب</a>' : '') + '</div></div>';
+          m.box.querySelector('#pwc').onclick = function () { try { navigator.clipboard.writeText(pw); toast('تم النسخ'); } catch (e2) { toast('انسخها يدويًا', 'err'); } };
+          toast('تم توليد كلمة مرور جديدة');
+        } catch (er) { toast(er.message, 'err'); }
+        btn.disabled = false; btn.textContent = 'إعادة تعيين كلمة المرور'; btn.classList.remove('btn-danger');
+      };
       m.box.querySelector('#uf2').onsubmit = async function (ev) {
         ev.preventDefault(); var f = ev.target;
         if (f.role.value !== u.role && u.id === state.user.id && !(await confirmBox('ستفقد صلاحيات المدير على حسابك. هل أنت متأكد؟'))) return;

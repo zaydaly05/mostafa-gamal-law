@@ -81,6 +81,18 @@
       async updateProfile(id, f) { return must(await sb.from('profiles').update(f).eq('id', id).select().single()); },
       async listProfiles() { return must(await sb.from('profiles').select('*').order('created_at', { ascending: false })); },
       async setRole(id, role) { must(await sb.from('profiles').update({ role: role }).eq('id', id)); },
+      async adminResetPassword(userId) {
+        var s = await sb.auth.getSession(), tok = s.data.session && s.data.session.access_token;
+        if (!tok) throw new Error('انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        var res = await fetch(CFG.SUPABASE_URL + '/functions/v1/admin-reset-password', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CFG.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + tok },
+          body: JSON.stringify({ user_id: userId })
+        });
+        var j = await res.json().catch(function () { return {}; });
+        if (res.status === 403 || res.status === 401) throw new Error('ليست لديك صلاحية لتنفيذ هذا الإجراء');
+        if (!res.ok || !j.password) throw new Error('تعذّر إعادة تعيين كلمة المرور، يرجى المحاولة مرة أخرى');
+        return j.password;
+      },
 
       async createCase(d) {
         return must(await sb.from('cases').insert({ owner: d.owner, title: d.title, type: d.type, description: d.description }).select().single());
@@ -196,6 +208,13 @@
       },
       async listProfiles() { guard(isAdmin()); return db.profiles.slice().reverse().map(function (p) { return Object.assign({}, p); }); },
       async setRole(id, role) { guard(isAdmin()); db.profiles.find(function (x) { return x.id === id; }).role = role; save(); },
+      async adminResetPassword(userId) {
+        guard(isAdmin());
+        var u = db.users.find(function (x) { return x.id === userId; }); guard(!!u);
+        var al = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', pw = '';
+        crypto.getRandomValues(new Uint8Array(10)).forEach(function (b) { pw += al[b % al.length]; });
+        u.hash = await sha(pw); save(); return pw;
+      },
 
       async createCase(d) {
         var m = me(); guard(!!m && (d.owner === m.id || isAdmin()));
