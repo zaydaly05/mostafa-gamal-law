@@ -7,11 +7,12 @@
 
   /* ---------- أدوات ---------- */
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  var nf = new Intl.NumberFormat('ar-EG', { useGrouping: false });
-  function num(n) { return nf.format(n); }
-  function fmtDate(d, time) { try { return new Date(d).toLocaleString('ar-EG', time ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }); } catch (e) { return ''; } }
-  function fmtSize(b) { if (!b && b !== 0) return ''; if (b < 1024) return num(b) + ' بايت'; if (b < 1048576) return num(Math.round(b / 1024)) + ' ك.ب'; return num(Math.round(b / 104857.6) / 10) + ' م.ب'; }
-  function caseNo(c) { return 'رقم ' + num(c.seq); }
+  var I18 = window.I18N;
+  function num(n) { return I18.num(n); }
+  function pctSym() { return I18.lang === 'en' ? '%' : '٪'; }
+  function fmtDate(d, time) { try { return new Date(d).toLocaleString(I18.locale(), time ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }); } catch (e) { return ''; } }
+  function fmtSize(b) { if (!b && b !== 0) return ''; var en = I18.lang === 'en'; if (b < 1024) return num(b) + (en ? ' B' : ' بايت'); if (b < 1048576) return num(Math.round(b / 1024)) + (en ? ' KB' : ' ك.ب'); return num(Math.round(b / 104857.6) / 10) + (en ? ' MB' : ' م.ب'); }
+  function caseNo(c) { return (I18.lang === 'en' ? 'No. ' : 'رقم ') + num(c.seq); }
   function st(key) { return ST.find(function (s) { return s.key === key; }) || ST[0]; }
   function badge(key) { var s = st(key); return '<span class="badge b-' + s.tone + '">' + s.label + '</span>'; }
   function isAdmin() { return state.profile && state.profile.role === 'admin'; }
@@ -163,7 +164,7 @@
   }
 
   /* ---------- مكونات مشتركة ---------- */
-  function progressBar(key) { var s = st(key); return '<div class="prog" role="progressbar" aria-valuenow="' + s.pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="نسبة التقدم"><i style="width:' + s.pct + '%"></i></div><small class="pct">' + num(s.pct) + '٪</small>'; }
+  function progressBar(key) { var s = st(key); return '<div class="prog" role="progressbar" aria-valuenow="' + s.pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="نسبة التقدم"><i style="width:' + s.pct + '%"></i></div><small class="pct">' + num(s.pct) + pctSym() + '</small>'; }
   function caseCard(c, adminView) {
     var who = adminView && c.profiles ? '<span class="who">👤 ' + esc(c.profiles.full_name || c.profiles.email || '—') + '</span>' : '';
     return '<a class="ccard" href="#/case/' + c.id + '"><div class="ctop"><span class="cno">' + caseNo(c) + '</span>' + badge(c.status) + '</div>' +
@@ -190,7 +191,7 @@
       '<form id="f" class="card-p form-p wide" novalidate>' +
       (admin ? '<label class="f"><span>العميل</span><select name="owner" required>' + owners.map(function (p) { return '<option value="' + p.id + '"' + (p.id === state.user.id ? ' selected' : '') + '>' + esc(p.full_name || p.email) + ' — ' + esc(p.email || '') + '</option>'; }).join('') + '</select></label>' : '') +
       field('title', 'عنوان القضية', 'required minlength="3" maxlength="150" placeholder="مثال: قضية تهرب ضريبي لشركة ..."') +
-      '<label class="f"><span>نوع القضية</span><select name="type" id="type">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></label>' +
+      '<label class="f"><span>نوع القضية</span><select name="type" id="type">' + TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('') + '</select></label>' +
       '<label class="f"><span>شرح مختصر للموقف</span><textarea name="description" rows="6" maxlength="4000" placeholder="اكتب ما حدث وأي معلومات تراها مهمة…"></textarea></label>' +
       '<div class="f"><span>المستندات (اختياري)</span>' + dropzone('files') + '<ul class="flist" id="fl"></ul></div>' +
       '<div class="row end"><a class="btn btn-ghost-d" href="#/dashboard">إلغاء</a><button class="btn btn-gold" type="submit">إرسال الطلب</button></div></form>';
@@ -320,7 +321,7 @@
     var counts = ST.map(function (s) { return { s: s, n: cases.filter(function (c) { return c.status === s.key; }).length }; });
     app.innerHTML = '<div class="phead"><div><h1>لوحة الإدارة</h1><p class="sub">كل القضايا والعملاء في مكان واحد.</p></div><div class="row"><a class="btn btn-ghost-d" href="#/admin/users">إدارة العملاء</a><a class="btn btn-gold" href="#/new">＋ فتح قضية لعميل</a></div></div>' +
       '<div class="stats s6"><div class="stat"><b>' + num(cases.length) + '</b><span>إجمالي القضايا</span></div>' + counts.filter(function (x) { return x.n || ['new', 'progress', 'closed'].indexOf(x.s.key) > -1; }).slice(0, 5).map(function (x) { return '<div class="stat"><b>' + num(x.n) + '</b><span>' + x.s.label + '</span></div>'; }).join('') + '</div>' +
-      '<div class="filters"><input id="q" type="search" placeholder="بحث بعنوان القضية أو اسم العميل…" aria-label="بحث"><select id="fs"><option value="">كل الحالات</option>' + ST.map(function (s) { return '<option value="' + s.key + '">' + s.label + '</option>'; }).join('') + '</select><select id="ft"><option value="">كل الأنواع</option>' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></div><div id="list"></div>';
+      '<div class="filters"><input id="q" type="search" placeholder="بحث بعنوان القضية أو اسم العميل…" aria-label="بحث"><select id="fs"><option value="">كل الحالات</option>' + ST.map(function (s) { return '<option value="' + s.key + '">' + s.label + '</option>'; }).join('') + '</select><select id="ft"><option value="">كل الأنواع</option>' + TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('') + '</select></div><div id="list"></div>';
     function draw() {
       var rows = cases.filter(function (c) {
         var hay = (c.title + ' ' + ((c.profiles || {}).full_name || '') + ' ' + ((c.profiles || {}).email || '')).toLowerCase();
@@ -355,7 +356,7 @@
     async function deleteUser(u, parent) {
       var n = nCases(u);
       var ok = await confirmBox({ tone: 'danger', icon: '🗑️', title: 'حذف المستخدم نهائيًا', okText: 'نعم، احذف نهائيًا',
-        html: 'سيتم حذف حساب <b>' + esc(u.full_name || u.email) + '</b>' + (n ? ' و<b>' + num(n) + '</b> قضية ومستنداتها وتحديثاتها' : '') + ' بشكل نهائي ولا يمكن التراجع عن ذلك.' });
+        html: n ? I18.t('سيتم حذف حساب {0} و{1} قضية ومستنداتها وتحديثاتها بشكل نهائي ولا يمكن التراجع عن ذلك.', ['<b>' + esc(u.full_name || u.email) + '</b>', '<b>' + num(n) + '</b>']) : I18.t('سيتم حذف حساب {0} بشكل نهائي ولا يمكن التراجع عن ذلك.', ['<b>' + esc(u.full_name || u.email) + '</b>'])  });
       if (!ok) return;
       try { await API.adminDeleteUser(u.id); users = users.filter(function (x) { return x.id !== u.id; }); cases = cases.filter(function (c) { return c.owner !== u.id; }); draw(); if (parent) parent.close(true); toast('تم حذف المستخدم'); }
       catch (er) { toast(er.message, 'err'); }
@@ -488,6 +489,7 @@
     banner.innerHTML = '⚠️ <b>وضع تجريبي:</b> البيانات تُحفظ على هذا الجهاز فقط. للتجربة كمدير سجّل بالبريد <b dir="ltr">' + esc((window.APP_CONFIG || {}).DEMO_ADMIN_EMAIL || '') + '</b>.';
   }
   window.addEventListener('hashchange', route);
+  window.addEventListener('langchange', function () { var y = window.scrollY; renderNav(); Promise.resolve(route()).then(function () { window.scrollTo(0, y); }); });
   var pendingAuth = /^#(access_token|refresh_token)/.test(location.hash);
   API.onAuth(function (ev) {
     if (ev === 'PASSWORD_RECOVERY') { pendingAuth = false; boot().then(function () { history.replaceState(null, '', '#/reset'); route(); }); }

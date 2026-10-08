@@ -13,7 +13,9 @@ document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 $('#form').addEventListener('submit', (e) => {
   e.preventDefault();
   const f = new FormData(e.target);
-  const text = `السلام عليكم يا مستشار،\nالاسم: ${f.get('name')}\nنوع القضية: ${f.get('type')}\nالتفاصيل: ${f.get('msg') || '-'}`;
+  const sel=e.target.querySelector('select[name=type]'),label=sel&&sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:f.get('type');
+  const en=window.I18N.lang==='en';
+  const text = en ? `Hello Counselor,\nName: ${f.get('name')}\nCase type: ${label}\nDetails: ${f.get('msg') || '-'}` : `السلام عليكم يا مستشار،\nالاسم: ${f.get('name')}\nنوع القضية: ${f.get('type')}\nالتفاصيل: ${f.get('msg') || '-'}`;
   window.open('https://wa.me/201229403351?text=' + encodeURIComponent(text), '_blank', 'noopener');
 });
 
@@ -77,7 +79,7 @@ const loader=$('#loader'),heroGo=()=>document.querySelector('.hero').classList.a
     g.append(img,tint,edge);svg.appendChild(g);pieces.push({g,tint,edge,i,j});}
   stage.appendChild(svg);
   const bar=$('#introBar'),pct=$('#introPct'),name=$('#introName'),skip=$('#introSkip');
-  const setP=(p)=>{bar.style.width=p+'%';pct.textContent=new Intl.NumberFormat('ar-EG').format(Math.round(p))+'٪';};
+  const setP=(p)=>{bar.style.width=p+'%';pct.textContent=window.I18N.num(Math.round(p))+(window.I18N.lang==='en'?'%':'٪');};
   let finished=false,loaded=false,assembled=false,tStart=performance.now();
   const finish=()=>{if(finished)return;finished=true;setP(100);stage.classList.add('final');loader.classList.add('done');
     setTimeout(heroGo,reduce?0:450);setTimeout(()=>{loader.classList.add("gone");},reduce?500:1750);};
@@ -119,11 +121,12 @@ const onScroll=()=>{tick=false;const y=scrollY,max=document.documentElement.scro
 addEventListener('scroll',()=>{if(!tick){tick=true;raf(onScroll);}},{passive:true});onScroll();
 
 /* animated counters */
-const fmt=new Intl.NumberFormat('ar-EG');
+const fmt={format:(n)=>window.I18N.num(n)};
 const co=new IntersectionObserver((es)=>es.forEach((e)=>{if(!e.isIntersecting)return;co.unobserve(e.target);
   const el=e.target,to=+el.dataset.count;if(reduce){el.textContent=fmt.format(to);return;}
   const t0=performance.now(),d=1400;const f=(t)=>{const p=Math.min((t-t0)/d,1),v=1-Math.pow(1-p,3);el.textContent=fmt.format(Math.round(to*v));if(p<1)raf(f);};raf(f);}),{threshold:.6});
 document.querySelectorAll('[data-count]').forEach((el)=>{el.textContent=fmt.format(0);co.observe(el);});
+addEventListener('langchange',()=>document.querySelectorAll('[data-count]').forEach((el)=>{el.textContent=fmt.format(+el.dataset.count);}));
 
 /* gallery filter pop animation */
 document.querySelectorAll('#chips .chip').forEach((b)=>b.addEventListener('click',()=>{

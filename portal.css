@@ -233,3 +233,7 @@ html[data-theme=light] .i-sun{display:none}html[data-theme=light] .i-moon{displa
   .steps li::before{display:none}
   .steps li{min-width:0;font-size:.75rem;line-height:1.35}
 }
+.pbar .lang-btn{border-color:var(--p-line);background:var(--p-surface2);color:var(--p-txt);min-width:48px;padding:0 12px}
+.pbar .lang-btn:hover{border-color:var(--gold);color:var(--gold)}
+html[dir=ltr] .toast i{order:0}
+html[dir=ltr] .mo-x:hover{transform:rotate(-90deg)}

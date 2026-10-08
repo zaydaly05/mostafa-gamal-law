@@ -394,3 +394,37 @@ html[data-theme=light] .ring{border-color:rgba(138,106,28,.5)}
   #menu{position:absolute!important;top:100%!important;inset-inline:0;max-height:calc(100dvh - 80px);border-bottom:1px solid var(--line);box-shadow:0 24px 40px -20px rgba(0,0,0,.5)}
   .nav:has(#menu.open){background:var(--navbg)}
 }
+
+/* ===== تبديل اللغة (العربية / English) ===== */
+.lang-btn{height:44px;min-width:52px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit;font-weight:800;font-size:.92rem;letter-spacing:.02em;cursor:pointer;transition:.25s;flex:none;touch-action:manipulation}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold)}
+html.lang-anim body{animation:langfade .45s ease}
+@keyframes langfade{from{opacity:.25}to{opacity:1}}
+html[lang=en] body{line-height:1.7}
+html[lang=en] .hero h1,html[lang=en] .intro-name span,html[lang=en] .quote{font-family:'Playfair Display','Cairo',Georgia,serif}
+html[lang=en] .hero h1{letter-spacing:-.01em}
+html[dir=ltr] .lb-prev{left:12px;right:auto}html[dir=ltr] .lb-next{right:12px;left:auto}
+html[dir=ltr] .intro-bar{direction:ltr}
+html[dir=ltr] .eyebrow::before{transform-origin:0 50%}
+html[dir=ltr] .about-img::before{inset:18px 18px -18px -18px}
+html[dir=ltr] .lb-c{direction:ltr}
+@media (max-width:600px){
+  html[dir=ltr] .lb-prev{left:calc(50% - 64px);right:auto}html[dir=ltr] .lb-next{right:calc(50% - 64px);left:auto}
+  html[dir=ltr] .about-img::before{display:none}
+}
+@media (max-width:960px){#menu .lang-btn{align-self:center;margin:8px 0}}
+#menu a:not(.btn),#menu .btn,.lang-btn{white-space:nowrap}
+html[lang=en] #menu{gap:20px}
+@media (min-width:961px) and (max-width:1240px){
+  #menu{gap:12px;font-size:.92rem}
+  .nav{padding-inline:14px}
+  .brand{font-size:1rem;max-width:220px;line-height:1.25}
+  #menu .btn.sm{padding:7px 14px}
+  .lang-btn{min-width:46px;padding:0 10px}
+}
+@media (max-width:960px){
+  .nav .brand{flex:1 1 0;min-width:0;margin-inline-end:8px}
+  .nav .brand span{white-space:normal;font-size:clamp(.88rem,3.7vw,1.1rem);line-height:1.25}
+}
+html[dir=ltr] .timeline li{transform:translateX(-24px)}
+html[dir=ltr] .timeline.in li{transform:none}
