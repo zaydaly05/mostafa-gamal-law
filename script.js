@@ -16,3 +16,8 @@ $('#form').addEventListener('submit', (e) => {
   const text = `السلام عليكم يا مستشار،\nالاسم: ${f.get('name')}\nنوع القضية: ${f.get('type')}\nالتفاصيل: ${f.get('msg') || '-'}`;
   window.open('https://wa.me/201229403351?text=' + encodeURIComponent(text), '_blank', 'noopener');
 });
+
+const lb=$('#lb'),lbi=lb.querySelector('img');
+document.querySelectorAll('.gal .g img').forEach((im)=>im.addEventListener('click',()=>{lbi.src=im.src;lbi.alt=im.alt;lb.hidden=false;}));
+lb.addEventListener('click',()=>{lb.hidden=true;});
+addEventListener('keydown',(e)=>{if(e.key==='Escape')lb.hidden=true;});

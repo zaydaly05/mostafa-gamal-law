@@ -156,3 +156,9 @@ html{-webkit-text-size-adjust:100%}
 .form input,.form select,.form textarea{font-size:16px}
 .btn,.burger,#menu a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 @media (max-width:960px){#menu a:not(.btn){padding:6px 0;font-size:1.1rem;text-align:center}}
+
+.gal2 .g{cursor:zoom-in}.gal .g.tall{grid-row:span 2}
+.lb{position:fixed;inset:0;z-index:100;background:rgba(5,9,18,.94);display:grid;place-items:center;padding:16px}
+.lb[hidden]{display:none}.lb img{max-width:100%;max-height:92vh;border-radius:10px;object-fit:contain}
+.lb-x{position:absolute;top:12px;inset-inline-start:16px;width:46px;height:46px;border-radius:50%;border:0;background:#fff;color:#0b1220;font-size:28px;line-height:1;cursor:pointer}
+.gal2{grid-auto-flow:dense}
