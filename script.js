@@ -47,10 +47,59 @@ const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
 const raf=(f)=>requestAnimationFrame(f);
 
-/* loader + hero intro */
-const loader=$('#loader'),heroGo=()=>{loader.classList.add('done');document.querySelector('.hero').classList.add('go');};
-let started=false;const start=()=>{if(started)return;started=true;setTimeout(heroGo,reduce?0:350);};
-addEventListener('load',start);setTimeout(start,2500);
+/* puzzle intro */
+const loader=$('#loader'),heroGo=()=>document.querySelector('.hero').classList.add('go');
+(()=>{
+  const N=4,C=512/N,NS='http://www.w3.org/2000/svg',stage=$('#introStage');
+  const hues=['#e6c97a','#e8788a','#5fc9c0','#9b8cf0','#6aa8ff','#f0a35e'];
+  let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+  // edge signs for jigsaw tabs: h[i][j] horizontal edge below piece(i,j), v[i][j] vertical edge right of piece(i,j)
+  const h=[],v=[];for(let i=0;i<N;i++){h.push([]);v.push([]);for(let j=0;j<N;j++){h[i].push(rnd()<.5?1:-1);v[i].push(rnd()<.5?1:-1);}}
+  const tab=(x0,y0,x1,y1,s)=>{ // from p0 to p1 with tab bulging to side s (+1 = left of direction)
+    const dx=x1-x0,dy=y1-y0,nx=-dy*s,ny=dx*s,P=(t,k)=>`${(x0+dx*t+nx*k).toFixed(1)} ${(y0+dy*t+ny*k).toFixed(1)}`;
+    return `L ${P(.38,0)} C ${P(.38,.07)} ${P(.33,.1)} ${P(.33,.17)} C ${P(.33,.29)} ${P(.67,.29)} ${P(.67,.17)} C ${P(.67,.1)} ${P(.62,.07)} ${P(.62,0)} L ${P(1,0)} `;};
+  const pieces=[];
+  const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','-40 -40 592 592');svg.setAttribute('aria-hidden','true');
+  const defs=document.createElementNS(NS,'defs');svg.appendChild(defs);
+  const cc=document.createElementNS(NS,'clipPath');cc.id='pzc';const ci=document.createElementNS(NS,'circle');ci.setAttribute('cx','256');ci.setAttribute('cy','256');ci.setAttribute('r','236');cc.appendChild(ci);defs.appendChild(cc);
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+    const x=j*C,y=i*C;let d=`M ${x} ${y} `;
+    d+=i===0?`L ${x+C} ${y} `:tab(x,y,x+C,y,-h[i-1][j]);           // top edge shared with piece above
+    d+=j===N-1?`L ${x+C} ${y+C} `:tab(x+C,y,x+C,y+C,v[i][j]);             // right
+    d+=i===N-1?`L ${x} ${y+C} `:tab(x+C,y+C,x,y+C,h[i][j]);               // bottom
+    d+=j===0?`L ${x} ${y} Z`:tab(x,y+C,x,y,-v[i][j-1])+'Z';          // left shared with left neighbour
+    const id='pz'+i+j,cp=document.createElementNS(NS,'clipPath');cp.id=id;
+    const cpp=document.createElementNS(NS,'path');cpp.setAttribute('d',d);cp.appendChild(cpp);defs.appendChild(cp);
+    const g=document.createElementNS(NS,'g');g.style.transformBox='fill-box';g.style.transformOrigin='center';
+    const img=document.createElementNS(NS,'image');img.setAttribute('href','img/logo.webp');img.setAttribute('width','512');img.setAttribute('height','512');img.setAttribute('clip-path',`url(#${id})`);
+    const tint=document.createElementNS(NS,'path');tint.setAttribute('d',d);tint.setAttribute('fill',hues[(i+j*2)%hues.length]);tint.style.mixBlendMode='color';tint.style.opacity='.9';
+    const edge=document.createElementNS(NS,'path');edge.setAttribute('d',d);edge.setAttribute('fill','none');edge.setAttribute('stroke','#fff1c1');edge.setAttribute('stroke-width','3');edge.setAttribute('clip-path','url(#pzc)');edge.style.opacity='.9';
+    g.append(img,tint,edge);svg.appendChild(g);pieces.push({g,tint,edge,i,j});}
+  stage.appendChild(svg);
+  const bar=$('#introBar'),pct=$('#introPct'),name=$('#introName'),skip=$('#introSkip');
+  const setP=(p)=>{bar.style.width=p+'%';pct.textContent=new Intl.NumberFormat('ar-EG').format(Math.round(p))+'٪';};
+  let finished=false,loaded=false,assembled=false,tStart=performance.now();
+  const finish=()=>{if(finished)return;finished=true;setP(100);stage.classList.add('final');loader.classList.add('done');
+    setTimeout(heroGo,reduce?0:450);setTimeout(()=>{loader.classList.add('gone');},reduce?500:1700);};
+  skip.addEventListener('click',finish);
+  addEventListener('load',()=>{loaded=true;if(assembled)setTimeout(finish,700);});
+  setTimeout(finish,9000);
+  if(reduce){pieces.forEach((p)=>{p.tint.style.opacity=0;p.edge.style.opacity=0;});name.classList.add('on');assembled=true;setP(100);setTimeout(()=>{if(loaded||document.readyState==='complete')finish();},500);return;}
+  const order=pieces.map((_,k)=>k).sort(()=>rnd()-.5);
+  const total=2100;
+  pieces.forEach((p,k)=>{
+    const rank=order.indexOf(k),delay=200+rank*(1100/pieces.length),dur=900+rnd()*300;
+    const ang=rnd()*6.283,dist=420+rnd()*380,dx=Math.cos(ang)*dist,dy=Math.sin(ang)*dist,rot=(rnd()-.5)*720,sc=.3+rnd()*1.4;
+    p.g.animate([{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg) scale(${sc})`,opacity:0},{opacity:1,offset:.25},{transform:'none',opacity:1}],{duration:dur,delay,easing:'cubic-bezier(.3,1.25,.45,1)',fill:'both'});
+    const land=delay+dur*.82;
+    p.tint.animate([{opacity:.9},{opacity:.9,offset:.55},{opacity:0}],{duration:land+500,easing:'ease-out',fill:'both'});
+    p.edge.animate([{opacity:.95},{opacity:.95,offset:.8},{opacity:.0}],{duration:land+900,easing:'ease-in',fill:'both'});
+    setTimeout(()=>{p.g.animate([{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});},land);
+  });
+  const t0=performance.now(),tick=()=>{const t=performance.now()-t0,p=Math.min(t/(total+300),1);if(!finished)setP(Math.min(p*96,96));if(p<1&&!finished)requestAnimationFrame(tick);};requestAnimationFrame(tick);
+  setTimeout(()=>{assembled=true;stage.classList.add('final');stage.animate([{filter:'drop-shadow(0 0 0 rgba(255,241,193,0)) brightness(1)'},{filter:'drop-shadow(0 0 50px rgba(255,241,193,.95)) brightness(1.5)'},{filter:'drop-shadow(0 18px 40px rgba(0,0,0,.6)) brightness(1)'}],{duration:900,easing:'ease-out'});name.classList.add('on');
+    if(loaded||document.readyState==='complete')setTimeout(finish,1500);},total+500);
+})();
 
 /* stagger reveals inside grids */
 document.querySelectorAll('.cards,.masonry,.cat,.strip-in,.hero-tags').forEach((p)=>[...p.children].forEach((c,i)=>c.style.setProperty('--d',Math.min(i,8)*0.07+'s')));

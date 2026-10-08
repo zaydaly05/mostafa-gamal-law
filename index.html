@@ -19,7 +19,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="loader" id="loader" aria-hidden="true"><img src="img/logo.webp" width="150" height="150" alt=""></div>
+<div class="loader" id="loader" role="status" aria-label="جارٍ التحميل">
+  <div class="intro-glow"></div>
+  <div class="intro-stage" id="introStage"></div>
+  <div class="intro-name" id="introName"><b>المستشار القانوني</b><span>مصطفى جمال</span></div>
+  <div class="intro-bar"><i id="introBar"></i></div>
+  <div class="intro-pct" id="introPct">٠٪</div>
+  <button type="button" class="intro-skip" id="introSkip">تخطي ›</button>
+</div>
 <div class="progress" id="progress"></div>
 
 <header class="nav" id="nav">
