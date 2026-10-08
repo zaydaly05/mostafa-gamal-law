@@ -81,6 +81,25 @@
       async updateProfile(id, f) { return must(await sb.from('profiles').update(f).eq('id', id).select().single()); },
       async listProfiles() { return must(await sb.from('profiles').select('*').order('created_at', { ascending: false })); },
       async setRole(id, role) { must(await sb.from('profiles').update({ role: role }).eq('id', id)); },
+      async adminUsers(action, payload) {
+        var s = await sb.auth.getSession(), tok = s.data.session && s.data.session.access_token;
+        if (!tok) throw new Error('انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        var res = await fetch(CFG.SUPABASE_URL + '/functions/v1/admin-users', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CFG.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + tok },
+          body: JSON.stringify(Object.assign({ action: action }, payload))
+        });
+        var j = await res.json().catch(function () { return {}; });
+        if (res.ok && j.ok) return j;
+        var map = {
+          email: 'صيغة البريد الإلكتروني غير صحيحة', password: 'كلمة المرور يجب ألا تقل عن ٦ أحرف', name: 'يرجى كتابة الاسم الكامل (٣ أحرف على الأقل)',
+          phone: 'رقم الهاتف غير صحيح', exists: 'هذا البريد الإلكتروني مسجّل بالفعل', self: 'لا يمكنك حذف حسابك الحالي',
+          last_admin: 'لا يمكن حذف آخر مدير في النظام', forbidden: 'ليست لديك صلاحية لتنفيذ هذا الإجراء', unauthorized: 'انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى'
+        };
+        throw new Error(map[j.error] || 'تعذّر تنفيذ الإجراء، يرجى المحاولة مرة أخرى');
+      },
+      async adminCreateUser(d) { var r = await this.adminUsers('create', d); return { id: r.user_id, password: r.password }; },
+      async adminDeleteUser(id) { return this.adminUsers('delete', { user_id: id }); },
+      async adminSetEmail(id, email) { await this.adminUsers('set_email', { user_id: id, email: email }); },
       async adminResetPassword(userId) {
         var s = await sb.auth.getSession(), tok = s.data.session && s.data.session.access_token;
         if (!tok) throw new Error('انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى');
@@ -208,6 +227,38 @@
       },
       async listProfiles() { guard(isAdmin()); return db.profiles.slice().reverse().map(function (p) { return Object.assign({}, p); }); },
       async setRole(id, role) { guard(isAdmin()); db.profiles.find(function (x) { return x.id === id; }).role = role; save(); },
+      async adminCreateUser(d) {
+        guard(isAdmin());
+        var email = String(d.email || '').trim().toLowerCase();
+        if (!/^\S+@\S+\.\S{2,}$/.test(email)) throw new Error('صيغة البريد الإلكتروني غير صحيحة');
+        if (db.users.some(function (u) { return u.email === email; })) throw new Error('هذا البريد الإلكتروني مسجّل بالفعل');
+        if (String(d.full_name || '').trim().length < 3) throw new Error('يرجى كتابة الاسم الكامل (٣ أحرف على الأقل)');
+        var al = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', pw = d.password || '', gen = !pw;
+        if (gen) crypto.getRandomValues(new Uint8Array(10)).forEach(function (b) { pw += al[b % al.length]; });
+        if (pw.length < 6) throw new Error('كلمة المرور يجب ألا تقل عن ٦ أحرف');
+        var id = uuid();
+        db.users.push({ id: id, email: email, hash: await sha(pw) });
+        db.profiles.push({ id: id, email: email, full_name: d.full_name.trim(), phone: d.phone || '', address: '', role: d.role === 'admin' ? 'admin' : 'customer', created_at: now() });
+        save(); return { id: id, password: gen ? pw : null };
+      },
+      async adminDeleteUser(id) {
+        guard(isAdmin());
+        if (id === me().id) throw new Error('لا يمكنك حذف حسابك الحالي');
+        var t = db.profiles.find(function (p) { return p.id === id; });
+        if (t && t.role === 'admin' && db.profiles.filter(function (p) { return p.role === 'admin'; }).length <= 1) throw new Error('لا يمكن حذف آخر مدير في النظام');
+        var cs = db.cases.filter(function (c) { return c.owner === id; });
+        for (var i = 0; i < cs.length; i++) await this.deleteCase(cs[i].id);
+        db.users = db.users.filter(function (u) { return u.id !== id; });
+        db.profiles = db.profiles.filter(function (p) { return p.id !== id; });
+        save(); return { ok: true, cases_deleted: cs.length };
+      },
+      async adminSetEmail(id, email) {
+        guard(isAdmin()); email = String(email || '').trim().toLowerCase();
+        if (!/^\S+@\S+\.\S{2,}$/.test(email)) throw new Error('صيغة البريد الإلكتروني غير صحيحة');
+        if (db.users.some(function (u) { return u.email === email && u.id !== id; })) throw new Error('هذا البريد الإلكتروني مسجّل بالفعل');
+        db.users.find(function (u) { return u.id === id; }).email = email;
+        db.profiles.find(function (p) { return p.id === id; }).email = email; save();
+      },
       async adminResetPassword(userId) {
         guard(isAdmin());
         var u = db.users.find(function (x) { return x.id === userId; }); guard(!!u);

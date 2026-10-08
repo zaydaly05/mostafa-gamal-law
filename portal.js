@@ -16,28 +16,59 @@
   function badge(key) { var s = st(key); return '<span class="badge b-' + s.tone + '">' + s.label + '</span>'; }
   function isAdmin() { return state.profile && state.profile.role === 'admin'; }
   function toast(msg, type) {
-    var t = document.createElement('div'); t.className = 'toast ' + (type || 'ok'); t.textContent = msg;
+    var t = document.createElement('div'); t.className = 'toast ' + (type || 'ok'); t.setAttribute('role', type === 'err' ? 'alert' : 'status'); t.innerHTML = '<i>' + (type === 'err' ? '✕' : '✓') + '</i><span></span>'; t.lastChild.textContent = msg; t.onclick = function () { t.remove(); };
     document.getElementById('toasts').appendChild(t); setTimeout(function () { t.classList.add('out'); }, 3600); setTimeout(function () { t.remove(); }, 4100);
   }
   function loading() { app.innerHTML = '<div class="pload"><i></i><span>جارٍ التحميل…</span></div>'; }
   function go(h) { if (location.hash === h) route(); else location.hash = h; }
   function btnBusy(b, on, txt) { if (!b) return; if (on) { b.dataset.t = b.textContent; b.disabled = true; b.textContent = txt || 'جارٍ التنفيذ…'; } else { b.disabled = false; b.textContent = b.dataset.t || b.textContent; } }
 
-  function modal(html) {
-    var m = document.getElementById('modal'), box = m.firstElementChild;
-    box.innerHTML = html; m.hidden = false; document.body.style.overflow = 'hidden';
-    var close = function (v) { m.hidden = true; document.body.style.overflow = ''; m.onclick = null; document.removeEventListener('keydown', esc_); if (box._res) { box._res(v); box._res = null; } };
-    function esc_(e) { if (e.key === 'Escape') close(null); }
-    document.addEventListener('keydown', esc_);
-    m.onclick = function (e) { if (e.target === m) close(null); };
-    box.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { close(b.dataset.close === 'ok' ? true : null); }); });
-    var first = box.querySelector('input,select,textarea,button'); if (first) first.focus();
-    return { box: box, close: close, wait: function () { return new Promise(function (r) { box._res = r; }); } };
+  /* ---------- النوافذ المنبثقة ---------- */
+  var mstack = [], mseq = 0, lockN = 0;
+  function lockScroll(on) { lockN += on ? 1 : -1; document.body.style.overflow = lockN > 0 ? 'hidden' : ''; }
+  function openModal(o) {
+    var id = ++mseq, el = document.createElement('div'), opener = document.activeElement, res = null, done = false;
+    el.className = 'mo';
+    el.innerHTML = '<div class="mo-box' + (o.tone ? ' t-' + o.tone : '') + (o.wide ? ' wide' : '') + '" role="dialog" aria-modal="true" aria-labelledby="mo-t' + id + '" tabindex="-1">' +
+      '<div class="mo-grab" aria-hidden="true"></div>' +
+      '<header class="mo-h">' + (o.icon ? '<span class="mo-ico">' + o.icon + '</span>' : '') + '<div class="mo-tt"><h3 id="mo-t' + id + '">' + o.title + '</h3>' + (o.sub ? '<p>' + o.sub + '</p>' : '') + '</div><button type="button" class="mo-x" data-close aria-label="إغلاق">×</button></header>' +
+      '<div class="mo-b">' + (o.body || '') + '</div>' + (o.foot ? '<footer class="mo-f">' + o.foot + '</footer>' : '') + '</div>';
+    document.body.appendChild(el); lockScroll(true);
+    var box = el.firstElementChild;
+    requestAnimationFrame(function () { el.classList.add('in'); });
+    function focusables() { return Array.from(box.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])')).filter(function (x) { return x.offsetParent !== null; }); }
+    var api = {
+      el: el, box: box, body: box.querySelector('.mo-b'), foot: box.querySelector('.mo-f'),
+      $: function (s) { return box.querySelector(s); },
+      close: function (v) {
+        if (done) return; done = true; mstack.splice(mstack.indexOf(api), 1); el.classList.remove('in'); el.classList.add('out');
+        setTimeout(function () { el.remove(); lockScroll(false); if (opener && opener.focus && document.contains(opener)) try { opener.focus({ preventScroll: true }); } catch (e) {} }, 190);
+        if (res) res(v === undefined ? null : v);
+      },
+      wait: function () { return new Promise(function (r) { res = r; if (done) r(null); }); }
+    };
+    api.onKey = function (e) {
+      if (e.key === 'Escape') { if (o.dismissible !== false) { e.preventDefault(); api.close(null); } }
+      else if (e.key === 'Tab') { var f = focusables(); if (!f.length) return; var first = f[0], last = f[f.length - 1]; if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } }
+    };
+    box.addEventListener('click', function (e) { var c = e.target.closest('[data-close]'); if (c) { api.close(c.dataset.close === 'ok' ? true : null); } });
+    el.addEventListener('mousedown', function (e) { if (e.target === el && o.dismissible !== false) api.close(null); });
+    mstack.push(api);
+    if (o.onMount) o.onMount(api);
+    setTimeout(function () { var f = o.focus ? box.querySelector(o.focus) : (box.querySelector('input:not([type=hidden]),select,textarea') || box.querySelector('.mo-f .btn:last-child') || box); if (f) f.focus({ preventScroll: true }); }, 60);
+    return api;
   }
-  function confirmBox(msg, okText) {
-    var m = modal('<h3>تأكيد الإجراء</h3><p>' + esc(msg) + '</p><div class="row end"><button class="btn btn-ghost-d" data-close="no">إلغاء</button><button class="btn btn-danger" data-close="ok">' + esc(okText || 'تأكيد') + '</button></div>');
+  document.addEventListener('keydown', function (e) { var t = mstack[mstack.length - 1]; if (t) t.onKey(e); });
+  var ICONS = { danger: '⚠️', warn: '❓', info: 'ℹ️', ok: '✅', user: '👤', plus: '➕', key: '🔑' };
+  function confirmBox(o, okText) {
+    if (typeof o === 'string') o = { msg: o, okText: okText };
+    var tone = o.tone || 'danger';
+    var m = openModal({ title: esc(o.title || 'تأكيد الإجراء'), icon: o.icon || ICONS[tone], tone: tone, body: '<p class="mo-msg">' + (o.html || esc(o.msg || '')) + '</p>',
+      foot: '<button type="button" class="btn btn-ghost-d" data-close="no">' + esc(o.cancelText || 'إلغاء') + '</button><button type="button" class="btn ' + (tone === 'danger' ? 'btn-danger' : 'btn-gold') + '" data-close="ok">' + esc(o.okText || 'تأكيد') + '</button>', focus: '.mo-f .btn-ghost-d' });
     return m.wait().then(function (v) { return !!v; });
   }
+  function copyText(t) { try { return navigator.clipboard.writeText(t).then(function () { toast('تم النسخ'); }, function () { toast('انسخها يدويًا', 'err'); }); } catch (e) { toast('انسخها يدويًا', 'err'); } }
+  function waLink(phone, msg) { var ph = String(phone || '').replace(/[^0-9]/g, ''); if (!ph) return ''; if (ph.charAt(0) === '0') ph = '20' + ph.slice(1); return 'https://wa.me/' + ph + '?text=' + encodeURIComponent(msg); }
 
   /* ---------- الشريط العلوي ---------- */
   function renderNav() {
@@ -306,43 +337,111 @@
   async function viewUsers() {
     loading();
     var users = await API.listProfiles(), cases = await API.listCases(), q = '';
-    app.innerHTML = '<div class="phead"><div><h1>إدارة العملاء</h1><p class="sub">' + num(users.length) + ' حساب مسجّل</p></div></div><div class="filters"><input id="q" type="search" placeholder="بحث بالاسم أو البريد أو الهاتف…" aria-label="بحث"></div><div id="ul" class="ulist"></div>';
+    app.innerHTML = '<div class="phead"><div><h1>إدارة العملاء</h1><p class="sub" id="ucount"></p></div><button class="btn btn-gold" id="addu" type="button">＋ إضافة مستخدم</button></div><div class="filters one"><input id="q" type="search" placeholder="بحث بالاسم أو البريد أو الهاتف…" aria-label="بحث"></div><div id="ul" class="ulist"></div>';
+    function nCases(u) { return cases.filter(function (c) { return c.owner === u.id; }).length; }
     function draw() {
+      document.getElementById('ucount').textContent = num(users.length) + ' حساب مسجّل';
       var rows = users.filter(function (u) { return !q || ((u.full_name || '') + ' ' + (u.email || '') + ' ' + (u.phone || '')).toLowerCase().indexOf(q) > -1; });
       document.getElementById('ul').innerHTML = rows.length ? rows.map(function (u) {
-        var n = cases.filter(function (c) { return c.owner === u.id; }).length;
-        return '<div class="urow"><div class="uav">' + esc((u.full_name || u.email || '?').trim().charAt(0)) + '</div><div class="uinfo"><b>' + esc(u.full_name || 'بدون اسم') + '</b> ' + (u.role === 'admin' ? '<span class="badge b-done">مدير</span>' : '') +
-          '<small dir="ltr">' + esc(u.email || '') + '</small><small dir="ltr">' + esc(u.phone || '') + '</small></div><div class="ucnt"><b>' + num(n) + '</b><span>قضية</span></div><button class="btn btn-ghost-d sm" data-e="' + u.id + '" type="button">تعديل</button></div>';
+        var self = u.id === state.user.id;
+        return '<div class="urow"><div class="uav">' + esc((u.full_name || u.email || '?').trim().charAt(0)) + '</div><div class="uinfo"><b>' + esc(u.full_name || 'بدون اسم') + (self ? ' <small class="you">(أنت)</small>' : '') + ' ' + (u.role === 'admin' ? '<span class="badge b-done">مدير</span>' : '') + '</b>' +
+          '<small dir="ltr">' + esc(u.email || '') + '</small><small dir="ltr">' + esc(u.phone || '') + '</small></div><div class="ucnt"><b>' + num(nCases(u)) + '</b><span>قضية</span></div>' +
+          '<div class="uact"><button class="btn btn-ghost-d sm" data-e="' + u.id + '" type="button">تعديل</button>' + (self ? '' : '<button class="btn btn-danger-o sm" data-d="' + u.id + '" type="button" aria-label="حذف ' + esc(u.full_name || u.email) + '">حذف</button>') + '</div></div>';
       }).join('') : '<div class="empty"><h3>لا توجد نتائج</h3></div>';
     }
     draw();
     document.getElementById('q').oninput = function (e) { q = e.target.value.trim().toLowerCase(); draw(); };
-    document.getElementById('ul').onclick = function (e) {
-      var b = e.target.closest('[data-e]'); if (!b) return; var u = users.find(function (x) { return x.id === b.dataset.e; });
-      var m = modal('<h3>تعديل بيانات العميل</h3><form id="uf2" class="form-p" novalidate>' + field('full_name', 'الاسم', 'value="' + esc(u.full_name) + '"') + field('phone', 'الهاتف', 'dir="ltr" value="' + esc(u.phone) + '"') + field('address', 'العنوان', 'value="' + esc(u.address) + '"') +
-        '<label class="f"><span>الصلاحية</span><select name="role"><option value="customer"' + (u.role === 'customer' ? ' selected' : '') + '>عميل</option><option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>مدير (كل الصلاحيات)</option></select></label>' +
-        '<div class="row end"><button type="button" class="btn btn-ghost-d" data-close="no">إلغاء</button><button class="btn btn-gold" type="submit">حفظ</button></div></form>' +
-        '<div class="resetbox"><h4>كلمة المرور</h4><p class="muted">يمكنك توليد كلمة مرور مؤقتة جديدة وإرسالها للعميل (مفيدة إن نسيها).</p><button type="button" class="btn btn-ghost-d sm" id="rst">إعادة تعيين كلمة المرور</button><div id="rstout"></div></div>');
+
+    async function deleteUser(u, parent) {
+      var n = nCases(u);
+      var ok = await confirmBox({ tone: 'danger', icon: '🗑️', title: 'حذف المستخدم نهائيًا', okText: 'نعم، احذف نهائيًا',
+        html: 'سيتم حذف حساب <b>' + esc(u.full_name || u.email) + '</b>' + (n ? ' و<b>' + num(n) + '</b> قضية ومستنداتها وتحديثاتها' : '') + ' بشكل نهائي ولا يمكن التراجع عن ذلك.' });
+      if (!ok) return;
+      try { await API.adminDeleteUser(u.id); users = users.filter(function (x) { return x.id !== u.id; }); cases = cases.filter(function (c) { return c.owner !== u.id; }); draw(); if (parent) parent.close(true); toast('تم حذف المستخدم'); }
+      catch (er) { toast(er.message, 'err'); }
+    }
+
+    function credsCard(email, pw, phone, name) {
+      var msg = 'السلام عليكم ' + (name || '') + '، تم إنشاء حسابك في بوابة العملاء.\nالبريد الإلكتروني: ' + email + '\nكلمة المرور: ' + pw + '\nرابط الدخول: ' + location.origin + location.pathname.replace(/[^/]*$/, '') + 'portal.html\nيرجى تغيير كلمة المرور من «ملفي الشخصي» بعد الدخول.';
+      var wa = waLink(phone, msg);
+      return '<div class="pwshow"><span>البريد الإلكتروني</span><b dir="ltr" class="sm">' + esc(email) + '</b><span>كلمة المرور</span><b dir="ltr" id="pwv">' + esc(pw) + '</b><div class="row wrap"><button type="button" class="btn btn-ghost-d sm" id="pwc">نسخ كلمة المرور</button>' + (wa ? '<a class="btn btn-gold sm" target="_blank" rel="noopener" href="' + wa + '">إرسال عبر واتساب</a>' : '') + '</div></div>';
+    }
+
+    function addUser() {
+      var m = openModal({ title: 'إضافة مستخدم جديد', icon: ICONS.plus, sub: 'يُنشأ الحساب مفعّلًا ويمكنه الدخول فورًا.',
+        body: '<form id="cf" class="form-p" novalidate>' + field('full_name', 'الاسم الكامل', 'required autocomplete="off" placeholder="الاسم الثلاثي"') + field('phone', 'رقم الهاتف', 'type="tel" dir="ltr" inputmode="tel" autocomplete="off" placeholder="رقم الهاتف (اختياري)"') +
+          field('email', 'البريد الإلكتروني', 'type="email" dir="ltr" inputmode="email" required autocomplete="off" placeholder="اكتب البريد الإلكتروني"') +
+          '<label class="f"><span>نوع الحساب</span><select name="role"><option value="customer">عميل</option><option value="admin">مدير (كل الصلاحيات)</option></select></label>' +
+          field('password', 'كلمة المرور', 'autocomplete="new-password" minlength="6" placeholder="اتركها فارغة لتوليد كلمة مرور تلقائيًا"') + '</form>',
+        foot: '<button type="button" class="btn btn-ghost-d" data-close="no">إلغاء</button><button type="submit" form="cf" class="btn btn-gold" id="csave">إنشاء الحساب</button>' });
+      m.$('#cf').onsubmit = async function (e) {
+        e.preventDefault(); var f = e.target, b = m.$('#csave');
+        if (f.full_name.value.trim().length < 3) return toast('يرجى كتابة الاسم الكامل', 'err');
+        if (!/^\S+@\S+\.\S{2,}$/.test(f.email.value.trim())) return toast('صيغة البريد الإلكتروني غير صحيحة', 'err');
+        if (f.phone.value.trim() && !/^[0-9+\s-]{8,16}$/.test(f.phone.value.trim())) return toast('رقم الهاتف غير صحيح', 'err');
+        if (f.password.value && f.password.value.length < 6) return toast('كلمة المرور يجب ألا تقل عن ٦ أحرف', 'err');
+        btnBusy(b, true, 'جارٍ الإنشاء…');
+        try {
+          var d = { full_name: f.full_name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(), role: f.role.value, password: f.password.value };
+          var r = await API.adminCreateUser(d);
+          users = await API.listProfiles(); draw();
+          var pw = r.password || d.password;
+          m.box.querySelector('.mo-tt h3').textContent = 'تم إنشاء الحساب'; m.box.querySelector('.mo-ico').textContent = ICONS.ok;
+          var sub = m.box.querySelector('.mo-tt p'); if (sub) sub.textContent = 'احتفظ ببيانات الدخول أو أرسلها للمستخدم الآن.';
+          m.body.innerHTML = credsCard(d.email, pw, d.phone, d.full_name);
+          m.foot.innerHTML = '<button type="button" class="btn btn-ghost-d" id="again">إضافة مستخدم آخر</button><button type="button" class="btn btn-gold" data-close="ok">تم</button>';
+          m.$('#pwc').onclick = function () { copyText(pw); };
+          m.$('#again').onclick = function () { m.close(true); setTimeout(addUser, 220); };
+          toast('تم إنشاء الحساب');
+        } catch (er) { toast(er.message, 'err'); btnBusy(b, false); }
+      };
+    }
+    document.getElementById('addu').onclick = addUser;
+
+    function editUser(u) {
+      var self = u.id === state.user.id;
+      var m = openModal({ title: 'تعديل بيانات المستخدم', icon: ICONS.user, sub: nCasesText(u), wide: true,
+        body: '<form id="uf2" class="form-p" novalidate><div class="grid2">' + field('full_name', 'الاسم', 'value="' + esc(u.full_name) + '"') + field('phone', 'الهاتف', 'dir="ltr" value="' + esc(u.phone) + '"') + '</div>' +
+          field('email', 'البريد الإلكتروني', 'type="email" dir="ltr" value="' + esc(u.email) + '"') + field('address', 'العنوان', 'value="' + esc(u.address) + '"') +
+          '<label class="f"><span>الصلاحية</span><select name="role"><option value="customer"' + (u.role === 'customer' ? ' selected' : '') + '>عميل</option><option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>مدير (كل الصلاحيات)</option></select></label></form>' +
+          '<div class="mo-sec"><h4>كلمة المرور</h4><p>توليد كلمة مرور مؤقتة جديدة وإرسالها للمستخدم (مفيدة إن نسيها).</p><button type="button" class="btn btn-ghost-d sm" id="rst">إعادة تعيين كلمة المرور</button><div id="rstout"></div></div>' +
+          (self ? '' : '<div class="mo-sec danger"><h4>منطقة الخطر</h4><p>حذف المستخدم يحذف حسابه وجميع قضاياه ومستنداته نهائيًا.</p><button type="button" class="btn btn-danger-o sm" id="delu">حذف هذا المستخدم</button></div>'),
+        foot: '<button type="button" class="btn btn-ghost-d" data-close="no">إلغاء</button><button type="submit" form="uf2" class="btn btn-gold" id="usave">حفظ التعديلات</button>' });
+      function nCasesText(x) { var n = nCases(x); return n ? 'لديه ' + num(n) + ' قضية' : 'لا توجد قضايا لهذا المستخدم'; }
+      m.$('#uf2').onsubmit = async function (ev) {
+        ev.preventDefault(); var f = ev.target, b = m.$('#usave');
+        if (f.full_name.value.trim().length < 3) return toast('يرجى كتابة الاسم الكامل', 'err');
+        if (!/^\S+@\S+\.\S{2,}$/.test(f.email.value.trim())) return toast('صيغة البريد الإلكتروني غير صحيحة', 'err');
+        if (f.role.value !== u.role && self && !(await confirmBox({ tone: 'warn', title: 'تغيير صلاحيتك', msg: 'ستفقد صلاحيات المدير على حسابك الحالي. هل أنت متأكد؟', okText: 'نعم، تابع' }))) return;
+        btnBusy(b, true, 'جارٍ الحفظ…');
+        try {
+          if (f.email.value.trim().toLowerCase() !== (u.email || '').toLowerCase()) await API.adminSetEmail(u.id, f.email.value.trim());
+          var np = await API.updateProfile(u.id, { full_name: f.full_name.value.trim(), phone: f.phone.value.trim(), address: f.address.value.trim(), role: f.role.value });
+          Object.assign(u, np, { email: f.email.value.trim().toLowerCase() }); if (self) state.profile = Object.assign({}, state.profile, np);
+          toast('تم حفظ التعديلات'); m.close(true);
+          if (self && np.role !== 'admin') { renderNav(); go('#/dashboard'); } else draw();
+        } catch (er) { toast(er.message, 'err'); btnBusy(b, false); }
+      };
       var armed = false;
-      m.box.querySelector('#rst').onclick = async function () {
+      m.$('#rst').onclick = async function () {
         var btn = this;
         if (!armed) { armed = true; btn.textContent = 'اضغط مرة أخرى للتأكيد'; btn.classList.add('btn-danger'); setTimeout(function () { armed = false; btn.textContent = 'إعادة تعيين كلمة المرور'; btn.classList.remove('btn-danger'); }, 5000); return; }
         armed = false; btn.disabled = true; btn.textContent = 'جارٍ التنفيذ…';
         try {
           var pw = await API.adminResetPassword(u.id);
-          var ph = String(u.phone || '').replace(/[^0-9]/g, ''); if (ph.charAt(0) === '0') ph = '20' + ph.slice(1);
-          var msg = 'السلام عليكم، تم إعادة تعيين كلمة مرور حسابك في بوابة العملاء.\nكلمة المرور المؤقتة: ' + pw + '\nيرجى تسجيل الدخول وتغييرها من «ملفي الشخصي».';
-          m.box.querySelector('#rstout').innerHTML = '<div class="pwshow"><span>كلمة المرور المؤقتة:</span><b dir="ltr" id="pwv">' + esc(pw) + '</b><div class="row"><button type="button" class="btn btn-ghost-d sm" id="pwc">نسخ</button>' + (ph ? '<a class="btn btn-gold sm" target="_blank" rel="noopener" href="https://wa.me/' + ph + '?text=' + encodeURIComponent(msg) + '">إرسال عبر واتساب</a>' : '') + '</div></div>';
-          m.box.querySelector('#pwc').onclick = function () { try { navigator.clipboard.writeText(pw); toast('تم النسخ'); } catch (e2) { toast('انسخها يدويًا', 'err'); } };
+          m.$('#rstout').innerHTML = credsCard(u.email || '', pw, u.phone, u.full_name);
+          m.$('#pwc').onclick = function () { copyText(pw); };
           toast('تم توليد كلمة مرور جديدة');
         } catch (er) { toast(er.message, 'err'); }
         btn.disabled = false; btn.textContent = 'إعادة تعيين كلمة المرور'; btn.classList.remove('btn-danger');
       };
-      m.box.querySelector('#uf2').onsubmit = async function (ev) {
-        ev.preventDefault(); var f = ev.target;
-        if (f.role.value !== u.role && u.id === state.user.id && !(await confirmBox('ستفقد صلاحيات المدير على حسابك. هل أنت متأكد؟'))) return;
-        try { var np = await API.updateProfile(u.id, { full_name: f.full_name.value.trim(), phone: f.phone.value.trim(), address: f.address.value.trim(), role: f.role.value }); Object.assign(u, np); if (u.id === state.user.id) { state.profile = np; } toast('تم حفظ التعديلات'); m.close(true); if (u.id === state.user.id && np.role !== 'admin') { renderNav(); go('#/dashboard'); } else draw(); } catch (er) { toast(er.message, 'err'); }
-      };
+      var del = m.$('#delu'); if (del) del.onclick = function () { deleteUser(u, m); };
+    }
+
+    document.getElementById('ul').onclick = function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.e) editUser(users.find(function (x) { return x.id === b.dataset.e; }));
+      else if (b.dataset.d) deleteUser(users.find(function (x) { return x.id === b.dataset.d; }));
     };
   }
 
